@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Filter from '../Filter';
 import ProductsItem from './ProductsItem';
 import { useLoaderData } from 'react-router';
+import LoadingContext from '../../context/LoadingContext/LoadingContext';
+import LoadingPage from '../LoadingPage';
 
 const Products = () => {
   const products = useLoaderData()
@@ -24,8 +26,6 @@ const Products = () => {
     setFilteredProducts(products)
     // console.log('Filtered Products Updated:', filteredProducts);
   }, [products])
-
-
   return (
     <div className='lg:grid lg:grid-cols-5 md:mx-5 mx-2'>
       <div className=''>

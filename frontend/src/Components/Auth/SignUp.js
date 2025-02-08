@@ -8,10 +8,13 @@ import AuthContext from '../../context/AuthContext/AuthContext';
 import { auth } from '../../Firebase/firebase.config';
 import { sendSignInLinkToEmail } from "firebase/auth";
 import { toast } from 'react-toastify';
+import LoadingContext from '../../context/LoadingContext/LoadingContext';
+import LoadingPage from '../LoadingPage';
 
 
 function SignUp() {
     const navigate = useNavigate()
+    const {loading, setLoading} = useContext(LoadingContext)
     const { credentials, setCredentials, handleSignUp } = useContext(AuthContext)
 
     const onChange = (event) => {
@@ -37,7 +40,7 @@ function SignUp() {
             toast.error(message);
         }
     }
-
+    if (loading) return <LoadingPage/>
     return (
         <section className=" mt-12">
             <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto lg:py-0">

@@ -1,6 +1,6 @@
 // OrderDetails.js
 import React from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const OrderDetails = ({ order }) => {
     const navigate = useNavigate()
@@ -28,7 +28,7 @@ const OrderDetails = ({ order }) => {
                     </thead>
                     <tbody>
                         {order.itemsOrdered.map((item) => (
-                            <tr onClick={()=>navigate(`/${item.productId.mainCategory}/${item.productId.subCategory}/${item.productId._id}`)} key={item.productId} className="border-t hover:bg-gray-50 transition-colors cursor-pointer">
+                            <tr  onClick={()=>navigate(`/${item.productId.mainCategory}/${item.productId.subCategory}/${item.productId._id}`)} key={item.productId._id} className="border-t hover:bg-gray-50 transition-colors cursor-pointer">
                                 <td className="border px-4 py-2">{item.productId.brand}</td> 
                                 <td className="border px-4 py-2">{item.productId.name}</td> 
                                 <td className="border px-4 py-2">{item.quantity}</td>

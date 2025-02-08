@@ -60,8 +60,8 @@ const CheckoutModal = ({ isOpen, onClose, product, quantity, setQuantity, coupon
                         <label className="block mb-1">
                             <input
                                 type="radio"
-                                value="standard"
-                                checked={deliveryMethod === 'standard'}
+                                value="Standard"
+                                checked={deliveryMethod === 'Standard'}
                                 onChange={(e) => setDeliveryMethod(e.target.value)}
                                 className="mr-2"
                             />
@@ -70,8 +70,8 @@ const CheckoutModal = ({ isOpen, onClose, product, quantity, setQuantity, coupon
                         <label className="block mb-1">
                             <input
                                 type="radio"
-                                value="express"
-                                checked={deliveryMethod === 'express'}
+                                value="Express"
+                                checked={deliveryMethod === 'Express'}
                                 onChange={(e) => setDeliveryMethod(e.target.value)}
                                 className="mr-2"
                             />

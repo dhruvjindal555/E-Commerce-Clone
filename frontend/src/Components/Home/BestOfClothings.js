@@ -1,19 +1,24 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect,useContext } from 'react';
 import { Link } from 'react-router-dom';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import LoadingPage from '../LoadingPage';
+import LoadingContext from '../../context/LoadingContext/LoadingContext';
 
 const BestOfClothings = () => {
   const [FashionProducts, setFashionProducts] = useState([]);
+  const {loading, setLoading} = useContext(LoadingContext)
 
   useEffect(() => {
+    setLoading(true)
     fetch('http://localhost:8888/product/getAllProduct')
-      .then((response) => response.json())
-      .then((responseData) => {
+    .then((response) => response.json())
+    .then((responseData) => {
         console.log('API Response:', responseData);
         const data = responseData.data;
-
+        setLoading(false)
+        
         if (Array.isArray(data)) {
           const fashionData = data.filter((product) => product.mainCategory === 'Fashion');
           setFashionProducts(fashionData.slice(0, 7));
@@ -25,7 +30,7 @@ const BestOfClothings = () => {
         console.error('Error fetching products:', error.message);
       });
   }, []);
-
+  if (loading) return <LoadingPage/>
   const settings = {
     dots: true,
     infinite: false,

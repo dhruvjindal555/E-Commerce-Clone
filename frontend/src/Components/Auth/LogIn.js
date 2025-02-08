@@ -5,9 +5,12 @@ import {
 } from "react-router-dom";
 import AuthContext from '../../context/AuthContext/AuthContext';
 import { toast } from 'react-toastify';
+import LoadingContext from '../../context/LoadingContext/LoadingContext';
+import LoadingPage from '../LoadingPage';
 
 function LogIn() {
   const { credentials, setCredentials, handleLogIn } = useContext(AuthContext)
+  const {loading, setLoading} = useContext(LoadingContext)
   const navigate = useNavigate()
 
   const onChange = (event) => {
@@ -27,6 +30,7 @@ function LogIn() {
       toast.error(message);
     }
   }
+  if (loading) return <LoadingPage/>
   return (
     <>
       <div>

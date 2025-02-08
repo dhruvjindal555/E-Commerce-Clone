@@ -1,15 +1,16 @@
-import React, { useState, useContext, useEffect, useRef } from 'react'
+import React, {  useContext, useEffect, useRef,useState } from 'react'
 import {
     Link,
     useNavigate
 } from "react-router-dom";
 import CartContext from '../../context/CartContext/CartContext';
 import { toast } from 'react-toastify';
-
+import AuthContext from '../../context/AuthContext/AuthContext';
 
 
 function Navbar() {
     const { cartNumber } = useContext(CartContext)
+    const {userDetails, fetchUserDetails } = useContext(AuthContext)
     const navigate = useNavigate()
     const menuButtonRef = useRef(1)
 
@@ -30,8 +31,10 @@ function Navbar() {
         }
         navigate('/auth/login')
     }
-
-
+    useEffect(()=>{
+        fetchUserDetails()
+    },[])
+    
     return (
         <div className=''>
             <nav className="shadow-md bg-white dark:bg-gray-900 sticky w-full z-20 top-0 start-0 border-b border-gray-200 dark:border-gray-600">
@@ -92,7 +95,7 @@ function Navbar() {
                         </div>
                         {window.localStorage.getItem('authToken') ? <div>
                             <Link to='/profilePage'>
-                                <img src='Screenshot 2024-07-20 141801.png' className='h-12 w-12 cursor-pointer rounded-full' />
+                                <img src={userDetails.profileUrl} className='h-12 w-12 cursor-pointer rounded-full' />
                             </Link>
                         </div> : <div></div>}
                     </div>

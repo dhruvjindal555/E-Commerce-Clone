@@ -8,7 +8,7 @@ const CartItem = ({ product, index }) => {
     const { removeFromCart, decrementQuantity, incrementQuantity } = useContext(CartContext)
 
     return (
-        <div key={index} className="flex p-4 border-b border-gray-300 w-3/4">
+        <div key={index} className="flex p-4 border-b border-gray-300">
             <div className="flex-shrink-0 overflow-hidden rounded-md mr-5">
                 <Carousel stopOnHover infiniteLoop autoPlay showThumbs={false} interval={2000} className='w-48 h-48'>
                     {product.images.map((url, index) => {
@@ -43,7 +43,7 @@ const CartItem = ({ product, index }) => {
                 </div>
 
             </div>
-            <div className="flex-shrink-0 text-right mr-10">
+            <div className="flex-shrink-0 text-right ">
                 <div className="text-2xl font-bold">{"₹" + product.price}</div>
                 <div className="line-through text-gray-500">{"₹" + product.mrp}</div>
                 <div className="text-green-500">Delivery: Free</div>

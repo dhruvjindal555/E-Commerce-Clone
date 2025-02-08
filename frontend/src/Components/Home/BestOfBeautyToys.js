@@ -1,16 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
+import LoadingContext from '../../context/LoadingContext/LoadingContext';
+import LoadingPage from '../LoadingPage';
 
 const BestofBeautyToys = () => {
   const [beautyProducts, setBeautyProducts] = useState([]);
+  const {loading, setLoading} = useContext(LoadingContext)
+
 
   useEffect(() => {
+    setLoading(true)
     fetch('http://localhost:8888/product/getAllProduct')
       .then((response) => response.json())
       .then((responseData) => {
         console.log('API Response:', responseData);
         const data = responseData.data;
-
+        setLoading(false)
         if (Array.isArray(data)) {
           const beautyData = data.filter((product) => product.mainCategory === 'Beauty');
           setBeautyProducts(beautyData.slice(0, 7));
@@ -22,6 +27,8 @@ const BestofBeautyToys = () => {
         console.error('Error fetching products:', error.message);
       });
   }, []);
+
+  if(loading) return <LoadingPage/>
 
   return (
     <div className='bg-gray-100 m-2'>

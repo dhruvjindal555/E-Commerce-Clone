@@ -15,14 +15,15 @@ import Products, { productsLoader } from "./Components/Products/Products";
 import ProductPage, { productPageLoader } from "./Components/Products/ProductPage";
 import HomeLayout from "./Layout/HomeLayout";
 import AuthLayout from "./Layout/AuthLayout";
-import CartState from "./context/CartContext/CartState";
 import Cart from "./Components/Cart/Cart";
 import Footer from "./Components/Footer";
 import VerifyOTP from "./Components/Auth/VerifyOTP";
-import AuthState from "./context/AuthContext/AuthState";
 import { ToastContainer } from 'react-toastify';
 import ProfilePage from "./Components/User/ProfilePage";
+import CartState from "./context/CartContext/CartState";
+import AuthState from "./context/AuthContext/AuthState";
 import OrderState from "./context/OrderContext/OrderState";
+import LoadingState from "./context/LoadingContext/LoadingState";
 
 
 const router = createBrowserRouter(
@@ -44,32 +45,32 @@ const router = createBrowserRouter(
         <Route path="signup/verify" element={<VerifyOTP />} />
       </Route>
     </>
-
   )
 )
 
 function App() {
   return (
-    <CartState>
-      <AuthState>
-        <OrderState>
-          <ToastContainer
-            position="top-right"
-            autoClose={2000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss={false}
-            draggable
-            pauseOnHover={false}
-            theme="dark"
-          />
-          <RouterProvider router={router} />
-        </OrderState>
-      </AuthState>
-    </CartState>
+    <LoadingState>
+      <CartState>
+        <AuthState>
+          <OrderState>
+            <ToastContainer
+              position="top-right"
+              autoClose={2000}
+              hideProgressBar={false}
+              newestOnTop={false}
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss={false}
+              draggable
+              pauseOnHover={false}
+              theme="dark"
+            />
+            <RouterProvider router={router} />
+          </OrderState>
+        </AuthState>
+      </CartState>
+    </LoadingState>
   );
 }
-
 export default App;

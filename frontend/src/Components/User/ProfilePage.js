@@ -2,8 +2,10 @@ import { useContext, useEffect, useState } from "react";
 import { FaUserCircle, FaBoxOpen, FaCog, FaUpload, FaBars, FaTimes } from "react-icons/fa";
 import OrderContext from "../../context/OrderContext/OrderContext";
 import OrderDetails from "./OrderDetails";
+import LoadingPage from "../LoadingPage";
 import AuthContext from "../../context/AuthContext/AuthContext";
 import { toast } from "react-toastify";
+import LoadingContext from "../../context/LoadingContext/LoadingContext";
 
 const ProfilePage = () => {
   const [activeTab, setActiveTab] = useState("orders");
@@ -11,6 +13,7 @@ const ProfilePage = () => {
   const [profileImage, setProfileImage] = useState(null);
   const { orders } = useContext(OrderContext);
   const { fetchUserDetails, updateUserDetails } = useContext(AuthContext);
+  const { loading, setLoading} = useContext(LoadingContext);
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -63,35 +66,49 @@ const ProfilePage = () => {
   // Handle Profile Picture Upload
   const handleProfileUpload = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      console.log(URL.createObjectURL(file));
-      setProfileImage(URL.createObjectURL(file));
-      try {
-        const updatedUser = await updateUserDetails(formData);
+    if (!file) return;
+    
+    const profileFormData = new FormData();
+    profileFormData.append('profileImage', file); // ✅ Matches Multer's expected field name
 
-        setProfileImage({
-          fullName: updatedUser.user.fullName,
-          email: updatedUser.user.email,
-          phoneNumber: updatedUser.user.phoneNumber,
-          address: updatedUser.user.address
-        });
-        setProfileImage(userData.profileUrl);
+    try {
+      setLoading(true);
+      const response = await fetch('http://localhost:8888/user/upload-profile', {
+        method: 'POST',
+        headers: {
+          'authToken': window.localStorage.getItem('authToken'), // 
+        },
+        body: profileFormData
+      });
+      setLoading(false);
 
-        toast.success('Profile Photo Updated Successfully');
-      } catch (error) {
-        // Show the error message coming from the server
-        toast.error(error.message);
-        console.log('Validation Error:', error.message);
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        throw new Error(responseData.message || 'Upload failed');
       }
 
+      console.log('Cloudinary Response:', responseData);
+      // Now update user details with the Cloudinary URL
+      const updatedUser = await updateUserDetails({
+        ...formData,
+        profileUrl: responseData.profileUrl // Use Cloudinary URL from backend
+      });
+      setProfileImage(URL.createObjectURL(file)); // ✅ Update state with the returned URL
+      toast.success('Profile Photo Updated Successfully');
+    } catch (error) {
+      console.error('Error uploading profile:', error);
+      toast.error(error.message);
     }
   };
+
 
   // Fetch user details on mount
   useEffect(() => {
     const loadUserData = async () => {
       try {
         const userData = await fetchUserDetails();
+        console.log(userData);
         setFormData({
           fullName: userData.fullName,
           email: userData.email,
@@ -107,10 +124,11 @@ const ProfilePage = () => {
     };
     loadUserData();
   }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updatedUser = await updateUserDetails(formData);
+      const updatedUser = await updateUserDetails({ ...formData, profileUrl: profileImage }); // Update user details with profile image
 
       setFormData({
         fullName: updatedUser.user.fullName,
@@ -127,7 +145,7 @@ const ProfilePage = () => {
     }
   };
 
-
+  if (loading) return <LoadingPage/>
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-6">
       {/* Mobile Menu Toggle */}

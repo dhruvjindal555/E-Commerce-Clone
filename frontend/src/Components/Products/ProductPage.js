@@ -2,15 +2,20 @@ import React, { useContext, useEffect, useState } from 'react'
 import Review from '../Review';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
-import { useLoaderData } from 'react-router';
+import { useLoaderData, useNavigate } from 'react-router';
 import CartContext from '../../context/CartContext/CartContext';
 import CheckoutModal from '../Cart/CheckoutModal';
 import OrderContext from '../../context/OrderContext/OrderContext';
-import LoadingPage from '../Home/LoadingPage';
+import LoadingPage from '../LoadingPage';
 import { toast } from 'react-toastify';
+import AuthContext from '../../context/AuthContext/AuthContext';
+import LoadingContext from '../../context/LoadingContext/LoadingContext';
 
 function ProductPage() {
-    const { addToCart, cart } = useContext(CartContext)
+    const navigate = useNavigate()
+    const {loading} = useContext(LoadingContext)
+    const { addToCart, cart, deliveryCosts } = useContext(CartContext)
+    const { userDetails } = useContext(AuthContext)
     const data = useLoaderData()
     const [modelYear, setModelYear] = useState(2023);
     const [pincode, setPincode] = useState('');
@@ -18,16 +23,12 @@ function ProductPage() {
     const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
     const [couponCode, setCouponCode] = useState('');
     const [quantity, setQuantity] = useState(1);
-    const { error, loading, handleCreateOrder, setNewOrderData } = useContext(OrderContext);
+    const {  handleCreateOrder } = useContext(OrderContext);
 
-    const [deliveryMethod, setDeliveryMethod] = useState('standard'); // Default delivery method
+    const [deliveryMethod, setDeliveryMethod] = useState('Standard'); // Default delivery method
     const [paymentMethod, setPaymentMethod] = useState('cod'); // Default payment method
-
-    const deliveryCosts = {
-        standard: 0,
-        express: 50 // Example cost for express delivery
-    };
-
+    
+ 
     const handlePincodeChange = (e) => {
         setPincode(e.target.value);
     };
@@ -37,7 +38,21 @@ function ProductPage() {
     };
 
     const handleBuyNow = () => {
-        setIsCheckoutModalOpen(true);
+        if(!window.localStorage.getItem('authToken')) return toast.error('You are required to login first!')
+        // console.log(userDetails)
+        // console.log(userDetails.phoneNumber)
+        // console.log(userDetails.address.street)
+        // console.log(userDetails.address.city)
+        // console.log(userDetails.address.pinCode)
+        // console.log(userDetails.address.country)
+        if (userDetails && userDetails.phoneNumber && userDetails.address.street && userDetails.address.city && userDetails.address.pinCode
+            && userDetails.address.country) {
+            setIsCheckoutModalOpen(true);
+            console.log(data);            
+        } else {
+            toast.error('You are required to fill the adress details first!')
+            navigate('/profilePage')
+        }
     };
 
     const handleCheckout = async () => {
@@ -51,21 +66,24 @@ function ProductPage() {
                     }
                 ],
                 orderStatus: "Pending",
-                shippingMethod: "Standard"
-            }            
+                shippingMethod: deliveryMethod,
+            }
             const response = await handleCreateOrder(newOrder);
-            if(!response.success){
+            if (!response.success) {
                 toast.error('Order placement failed');
-                console.log(response.message);                
+                console.log(response.message);
                 return;
             }
             setIsCheckoutModalOpen(false);
             toast.success('Order placed sucessfully!');
-        }else{
+        } else {
             toast.info('Online payment is not yet implemented');
         }
 
     };
+    useEffect(()=>{
+        window.scrollTo(0,0)
+    },[])
     // Effect to lock/unlock scroll when modal is open
     useEffect(() => {
         if (isCheckoutModalOpen) {
@@ -100,7 +118,7 @@ function ProductPage() {
                     <div className="flex flex-row gap-3 xl:space-x-4 justify-center">
                         <button
                             onClick={() => {
-                                console.log(addToCart(data));
+                                toast.success(addToCart(data));
                                 console.log(cart);
                             }}
                             className=" w-full bg-yellow-300 hover:bg-yellow-400 text-white text-lg font-bold py-2 px-4 rounded inline-flex items-center justify-center ">
@@ -271,7 +289,7 @@ export const productPageLoader = async ({ params }) => {
     try {
         const response = await fetch(`http://localhost:8888/product/getProduct/${id}`);
         if (!response.ok) throw new Error('Network response was not ok');
-        const data = await response.json();
+        const data = await response.json()
         console.log('Response from backend:', data);
         return data.data;
     } catch (error) {
