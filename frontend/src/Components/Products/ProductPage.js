@@ -13,7 +13,7 @@ import LoadingContext from '../../context/LoadingContext/LoadingContext';
 
 function ProductPage() {
     const navigate = useNavigate()
-    const {loading} = useContext(LoadingContext)
+    const { loading } = useContext(LoadingContext)
     const { addToCart, cart, deliveryCosts } = useContext(CartContext)
     const { userDetails } = useContext(AuthContext)
     const data = useLoaderData()
@@ -23,12 +23,12 @@ function ProductPage() {
     const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
     const [couponCode, setCouponCode] = useState('');
     const [quantity, setQuantity] = useState(1);
-    const {  handleCreateOrder } = useContext(OrderContext);
+    const { handleCreateOrder } = useContext(OrderContext);
 
     const [deliveryMethod, setDeliveryMethod] = useState('Standard'); // Default delivery method
     const [paymentMethod, setPaymentMethod] = useState('cod'); // Default payment method
-    
- 
+
+
     const handlePincodeChange = (e) => {
         setPincode(e.target.value);
     };
@@ -38,7 +38,7 @@ function ProductPage() {
     };
 
     const handleBuyNow = () => {
-        if(!window.localStorage.getItem('authToken')) return toast.error('You are required to login first!')
+        if (!window.localStorage.getItem('authToken')) return toast.error('You are required to login first!')
         // console.log(userDetails)
         // console.log(userDetails.phoneNumber)
         // console.log(userDetails.address.street)
@@ -48,7 +48,7 @@ function ProductPage() {
         if (userDetails && userDetails.phoneNumber && userDetails.address.street && userDetails.address.city && userDetails.address.pinCode
             && userDetails.address.country) {
             setIsCheckoutModalOpen(true);
-            console.log(data);            
+            console.log(data);
         } else {
             toast.error('You are required to fill the adress details first!')
             navigate('/profilePage')
@@ -81,9 +81,9 @@ function ProductPage() {
         }
 
     };
-    useEffect(()=>{
-        window.scrollTo(0,0)
-    },[])
+    useEffect(() => {
+        window.scrollTo(0, 0)
+    }, [])
     // Effect to lock/unlock scroll when modal is open
     useEffect(() => {
         if (isCheckoutModalOpen) {
@@ -102,7 +102,7 @@ function ProductPage() {
         <div >
             <div className="lg:mx-20 md:mx-10 mx-4 md:px-10 sm:px-4 px-2 bg-white shadow-lg rounded-lg overflow-hidden xl:flex-row flex-col flex justify-evenly ">
                 <div className="md:flex-shrink-0 flex flex-col justify-center xl:block">
-                    <Carousel stopOnHover infiniteLoop autoPlay interval={2000} className='md:w-screen-75 sm:w-fit  mx-auto'>
+                    <Carousel stopOnHover infiniteLoop autoPlay interval={2000} className='md:w-screen-75 w-3/4 sm:w-fit  mx-auto'>
                         {data.images.map((url, index) => {
                             return (<div className='flex justify-center items-center h-fit w-full  ' key={index}>
                                 <img
@@ -196,7 +196,7 @@ function ProductPage() {
                                 </button>
                             </div>
                         </div>
-                        <div className="my-3  flex justify-between items-start sm:items-center sm:flex-row flex-col ">
+                        <div className="my-3 flex justify-between items-start sm:items-center sm:flex-row flex-col ">
                             <div className='flex gap-4 ' >
                                 <div className="text-gray-700 font-semibold flex items-center">
                                     <svg className="w-5 h-5 text-blue-500 mr-1" fill="currentColor" viewBox="0 0 20 20">
@@ -211,10 +211,10 @@ function ProductPage() {
                                     className="mt-1 block  border-b-2 focus:outline-none focus:border-blue-500"
                                     placeholder="Enter pincode"
                                 />
-                                {isPincodeInvalid() && (
-                                    <div className="text-red-500 mt-1">Invalid Pincode</div>
-                                )}
                             </div>
+                            {isPincodeInvalid() && (
+                                <div className="text-red-500 mt-1">Invalid Pincode</div>
+                            )}
                             <div className="text-gray-700 font-medium mt-1">Delivery by Wed Jul 24 2024 | Free</div>
                         </div>
                         <div className='flex justify-between flex-col sm:flex-row'>

@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import Filter from '../Filter';
+import Filter from '../Home/Filter';
 import ProductsItem from './ProductsItem';
 import { useLoaderData } from 'react-router';
 import LoadingContext from '../../context/LoadingContext/LoadingContext';

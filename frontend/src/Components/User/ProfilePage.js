@@ -1,5 +1,12 @@
 import { useContext, useEffect, useState } from "react";
-import { FaUserCircle, FaBoxOpen, FaCog, FaUpload, FaBars, FaTimes } from "react-icons/fa";
+import {
+  FaUserCircle,
+  FaBoxOpen,
+  FaCog,
+  FaUpload,
+  FaBars,
+  FaTimes,
+} from "react-icons/fa";
 import OrderContext from "../../context/OrderContext/OrderContext";
 import OrderDetails from "./OrderDetails";
 import LoadingPage from "../LoadingPage";
@@ -13,19 +20,20 @@ const ProfilePage = () => {
   const [profileImage, setProfileImage] = useState(null);
   const { orders } = useContext(OrderContext);
   const { fetchUserDetails, updateUserDetails } = useContext(AuthContext);
-  const { loading, setLoading} = useContext(LoadingContext);
+  const { loading, setLoading } = useContext(LoadingContext);
   const [formData, setFormData] = useState({
-    fullName: '',
-    email: '',
-    phoneNumber: '',
+    fullName: "",
+    email: "",
+    phoneNumber: "",
     address: {
-      street: '',
-      city: '',
-      state: '',
-      pinCode: '',
-      country: ''
-    }
+      street: "",
+      city: "",
+      state: "",
+      pinCode: "",
+      country: "",
+    },
   });
+
   // Order filter state
   const [orderFilter, setOrderFilter] = useState({
     status: "all",
@@ -33,93 +41,89 @@ const ProfilePage = () => {
     month: "all", // Added month filter
   });
 
-  // Sort state
-  const [sortOrder, setSortOrder] = useState("des"); // Default sort order
+  // Sort state – default descending order (note the value is "desc" to match the select option)
+  const [sortOrder, setSortOrder] = useState("desc");
 
   // Month options for the select dropdown
   const months = Array.from({ length: 12 }, (_, i) => ({
     value: (i + 1).toString(),
-    label: new Date(0, i).toLocaleString('en-US', { month: 'long' }),
+    label: new Date(0, i).toLocaleString("en-US", { month: "long" }),
   }));
 
-  // Filter orders
+  // Filter orders based on status, year and month
   const filteredOrders = orders.filter((order) => {
     const orderDate = new Date(order.createdAt);
     const orderYear = orderDate.getFullYear().toString();
-    const orderMonth = (orderDate.getMonth() + 1).toString(); // Months are 0-based in JS
+    const orderMonth = (orderDate.getMonth() + 1).toString(); // Months are 0-based
 
     return (
-      (orderFilter.status === "all" || order.orderStatus === orderFilter.status) &&
+      (orderFilter.status === "all" ||
+        order.orderStatus === orderFilter.status) &&
       orderYear === orderFilter.year &&
       (orderFilter.month === "all" || orderMonth === orderFilter.month)
     );
   });
 
-  // Sort filtered orders
+  // Sort filtered orders by date
   const sortedOrders = filteredOrders.sort((a, b) => {
     const dateA = new Date(a.createdAt);
     const dateB = new Date(b.createdAt);
-
-    return sortOrder === "des" ? dateB - dateA : dateA - dateB; // Ascending or descending sort
+    return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
   });
 
   // Handle Profile Picture Upload
   const handleProfileUpload = async (e) => {
     const file = e.target.files[0];
     if (!file) return;
-    
+
     const profileFormData = new FormData();
-    profileFormData.append('profileImage', file); // ✅ Matches Multer's expected field name
+    profileFormData.append("profileImage", file); // Matches backend field name
 
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:8888/user/upload-profile', {
-        method: 'POST',
+      const response = await fetch("http://localhost:8888/user/upload-profile", {
+        method: "POST",
         headers: {
-          'authToken': window.localStorage.getItem('authToken'), // 
+          authToken: window.localStorage.getItem("authToken"),
         },
-        body: profileFormData
+        body: profileFormData,
       });
       setLoading(false);
 
       const responseData = await response.json();
-
       if (!response.ok) {
-        throw new Error(responseData.message || 'Upload failed');
+        throw new Error(responseData.message || "Upload failed");
       }
 
-      console.log('Cloudinary Response:', responseData);
+      console.log("Cloudinary Response:", responseData);
       // Now update user details with the Cloudinary URL
-      const updatedUser = await updateUserDetails({
+      await updateUserDetails({
         ...formData,
-        profileUrl: responseData.profileUrl // Use Cloudinary URL from backend
+        profileUrl: responseData.profileUrl,
       });
-      setProfileImage(URL.createObjectURL(file)); // ✅ Update state with the returned URL
-      toast.success('Profile Photo Updated Successfully');
+      setProfileImage(URL.createObjectURL(file));
+      toast.success("Profile Photo Updated Successfully");
     } catch (error) {
-      console.error('Error uploading profile:', error);
+      console.error("Error uploading profile:", error);
       toast.error(error.message);
     }
   };
-
 
   // Fetch user details on mount
   useEffect(() => {
     const loadUserData = async () => {
       try {
         const userData = await fetchUserDetails();
-        console.log(userData);
         setFormData({
           fullName: userData.fullName,
           email: userData.email,
           phoneNumber: userData.phoneNumber,
-          address: userData.address
+          address: userData.address,
         });
         setProfileImage(userData.profileUrl);
-        console.log(userData);
       } catch (error) {
-        toast.error('Failed to fetch user details');
-        console.log(error);
+        toast.error("Failed to fetch user details");
+        console.error(error);
       }
     };
     loadUserData();
@@ -128,24 +132,24 @@ const ProfilePage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const updatedUser = await updateUserDetails({ ...formData, profileUrl: profileImage }); // Update user details with profile image
-
+      const updatedUser = await updateUserDetails({
+        ...formData,
+        profileUrl: profileImage,
+      });
       setFormData({
         fullName: updatedUser.user.fullName,
         email: updatedUser.user.email,
         phoneNumber: updatedUser.user.phoneNumber,
-        address: updatedUser.user.address
+        address: updatedUser.user.address,
       });
-
-      toast.success('Successfully updated user details');
+      toast.success("Successfully updated user details");
     } catch (error) {
-      // Show the error message coming from the server
       toast.error(error.message);
-      console.log('Validation Error:', error.message);
+      console.error("Validation Error:", error.message);
     }
   };
 
-  if (loading) return <LoadingPage/>
+  if (loading) return <LoadingPage />;
   return (
     <div className="max-w-6xl mx-auto p-4 md:p-6">
       {/* Mobile Menu Toggle */}
@@ -168,7 +172,12 @@ const ProfilePage = () => {
           ) : (
             <FaUserCircle className="text-gray-500 text-6xl md:text-7xl" />
           )}
-          <input type="file" className="hidden" id="profileUpload" onChange={handleProfileUpload} />
+          <input
+            type="file"
+            className="hidden"
+            id="profileUpload"
+            onChange={handleProfileUpload}
+          />
           <label
             htmlFor="profileUpload"
             className="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full cursor-pointer"
@@ -183,16 +192,28 @@ const ProfilePage = () => {
       </div>
 
       {/* Tabs Section (Responsive) */}
-      <div className={`flex flex-col md:flex-row gap-4 mt-4 border-b pb-2 ${menuOpen ? "block" : "hidden md:flex"}`}>
+      <div
+        className={`flex flex-col md:flex-row gap-4 mt-4 border-b pb-2 ${
+          menuOpen ? "block" : "hidden md:flex"
+        }`}
+      >
         <button
           onClick={() => setActiveTab("orders")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-md ${activeTab === "orders" ? "bg-blue-500 text-white" : "bg-gray-100"}`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-md ${
+            activeTab === "orders"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-100"
+          }`}
         >
           <FaBoxOpen /> My Orders
         </button>
         <button
           onClick={() => setActiveTab("settings")}
-          className={`flex items-center gap-2 px-4 py-2 rounded-md ${activeTab === "settings" ? "bg-blue-500 text-white" : "bg-gray-100"}`}
+          className={`flex items-center gap-2 px-4 py-2 rounded-md ${
+            activeTab === "settings"
+              ? "bg-blue-500 text-white"
+              : "bg-gray-100"
+          }`}
         >
           <FaCog /> Account Settings
         </button>
@@ -203,10 +224,10 @@ const ProfilePage = () => {
         {/* Orders Section */}
         {activeTab === "orders" && (
           <div className="bg-white p-4 rounded-lg shadow-md">
-            <div className='w-full flex justify-between'>
+            <div className="w-full flex flex-col md:flex-row justify-between items-start md:items-center">
               <h3 className="text-lg font-semibold">Recent Orders</h3>
-              <div>
-                <span className='w-fit mx-10'>
+              <div className="mt-2 md:mt-0">
+                <span className="w-fit mx-0 md:mx-10">
                   {`Showing ${sortedOrders.length} of ${orders.length} results`}
                 </span>
               </div>
@@ -223,12 +244,16 @@ const ProfilePage = () => {
               </ul>
 
               {/* Filter Box */}
-              <div className="md:w-1/4 bg-gray-100 p-3 rounded-md">
-                <label className="block text-sm font-medium">Filter by Status</label>
+              <div className="w-full md:w-1/4 bg-gray-100 p-3 rounded-md">
+                <label className="block text-sm font-medium">
+                  Filter by Status
+                </label>
                 <select
                   className="w-full p-2 rounded-md border mt-1"
                   value={orderFilter.status}
-                  onChange={(e) => setOrderFilter({ ...orderFilter, status: e.target.value })}
+                  onChange={(e) =>
+                    setOrderFilter({ ...orderFilter, status: e.target.value })
+                  }
                 >
                   <option value="all">All</option>
                   <option value="Delivered">Delivered</option>
@@ -237,25 +262,33 @@ const ProfilePage = () => {
                   <option value="Cancelled">Cancelled</option>
                 </select>
 
-                <label className="block text-sm font-medium mt-3">Filter by Year</label>
+                <label className="block text-sm font-medium mt-3">
+                  Filter by Year
+                </label>
                 <select
                   className="w-full p-2 rounded-md border mt-1"
                   value={orderFilter.year}
-                  onChange={(e) => setOrderFilter({ ...orderFilter, year: e.target.value })}
+                  onChange={(e) =>
+                    setOrderFilter({ ...orderFilter, year: e.target.value })
+                  }
                 >
                   <option value="2025">2025</option>
                   <option value="2024">2024</option>
                 </select>
 
-                {/* Add Month Filter */}
-                <label className="block text-sm font-medium mt-3">Filter by Month</label>
+                {/* Month Filter */}
+                <label className="block text-sm font-medium mt-3">
+                  Filter by Month
+                </label>
                 <select
                   className="w-full p-2 rounded-md border mt-1"
                   value={orderFilter.month}
-                  onChange={(e) => setOrderFilter({ ...orderFilter, month: e.target.value })}
+                  onChange={(e) =>
+                    setOrderFilter({ ...orderFilter, month: e.target.value })
+                  }
                 >
                   <option value="all">All Months</option>
-                  {months.map(month => (
+                  {months.map((month) => (
                     <option key={month.value} value={month.value}>
                       {month.label}
                     </option>
@@ -263,7 +296,9 @@ const ProfilePage = () => {
                 </select>
 
                 {/* Sort By Feature */}
-                <label className="block text-sm font-medium mt-3">Sort By</label>
+                <label className="block text-sm font-medium mt-3">
+                  Sort By
+                </label>
                 <select
                   className="w-full p-2 rounded-md border mt-1"
                   value={sortOrder}
@@ -283,39 +318,60 @@ const ProfilePage = () => {
             <h3 className="text-lg font-semibold">Account Settings</h3>
             <form onSubmit={handleSubmit} className="mt-4 space-y-3">
               {Object.keys(formData).map((key) => {
-                if (key !== 'address') {
-                  return <div key={key} className="flex flex-col md:flex-row md:items-center justify-between">
-                    <label className="text-gray-700 capitalize text-sm md:text-base">{key}</label>
-                    <input
-                      type="text"
-                      className="border px-2 py-1 rounded-md text-sm md:text-base"
-                      value={formData[key]}
-                      onChange={(e) => setFormData({ ...formData, [key]: e.target.value })}
-                    />
-                  </div>
+                if (key !== "address") {
+                  return (
+                    <div
+                      key={key}
+                      className="flex flex-col md:flex-row md:items-center justify-between gap-2"
+                    >
+                      <label className="text-gray-700 capitalize text-sm md:text-base">
+                        {key}
+                      </label>
+                      <input
+                        type="text"
+                        className="w-full md:w-auto border px-2 py-1 rounded-md text-sm md:text-base"
+                        value={formData[key]}
+                        onChange={(e) =>
+                          setFormData({ ...formData, [key]: e.target.value })
+                        }
+                      />
+                    </div>
+                  );
                 }
                 return (
                   <div key={key} className="space-y-3">
-                    {formData.address && Object.keys(formData.address).map((key) => (
-                      <div key={key} className="flex flex-col md:flex-row md:items-center justify-between">
-                        <label className="text-gray-700 capitalize text-sm md:text-base">{key}</label>
-                        <input
-                          type="text"
-                          className="border px-2 py-1 rounded-md text-sm md:text-base"
-                          value={formData.address[key]}
-                          onChange={(e) => setFormData({
-                            ...formData, address: {
-                              ...formData.address,
-                              [key]: e.target.value
+                    {formData.address &&
+                      Object.keys(formData.address).map((subKey) => (
+                        <div
+                          key={subKey}
+                          className="flex flex-col md:flex-row md:items-center justify-between gap-2"
+                        >
+                          <label className="text-gray-700 capitalize text-sm md:text-base">
+                            {subKey}
+                          </label>
+                          <input
+                            type="text"
+                            className="w-full md:w-auto border px-2 py-1 rounded-md text-sm md:text-base"
+                            value={formData.address[subKey]}
+                            onChange={(e) =>
+                              setFormData({
+                                ...formData,
+                                address: {
+                                  ...formData.address,
+                                  [subKey]: e.target.value,
+                                },
+                              })
                             }
-                          })}
-                        />
-                      </div>
-                    ))}
+                          />
+                        </div>
+                      ))}
                   </div>
-                )
+                );
               })}
-              <button type="submit" className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md">
+              <button
+                type="submit"
+                className="mt-4 bg-red-500 text-white px-4 py-2 rounded-md"
+              >
                 Update Details
               </button>
             </form>

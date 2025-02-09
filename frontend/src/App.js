@@ -1,7 +1,7 @@
 import Navbar from "./Components/Home/Navbar";
 import LogIn from "./Components/Auth/LogIn";
 import SignUp from "./Components/Auth/SignUp";
-import Contact from "./Components/Contact";
+import Contact from "./Components/User/Contact";
 import {
   Route,
   createBrowserRouter,
@@ -24,6 +24,7 @@ import CartState from "./context/CartContext/CartState";
 import AuthState from "./context/AuthContext/AuthState";
 import OrderState from "./context/OrderContext/OrderState";
 import LoadingState from "./context/LoadingContext/LoadingState";
+import Error404 from "./Components/Error404";
 
 
 const router = createBrowserRouter(
@@ -31,6 +32,7 @@ const router = createBrowserRouter(
     <>
       <Route path="/" element={<HomeLayout />} >
         <Route index path="" element={<><Poster /><BestOfClothings /><BestofElectronics /></>} />
+        <Route path="*" element={<Error404 />} />
         <Route path="cart" element={<Cart />} />
         <Route path="profilePage" element={<ProfilePage />} />
         <Route path=":mainCategory" element={<Products />} loader={productsLoader} />

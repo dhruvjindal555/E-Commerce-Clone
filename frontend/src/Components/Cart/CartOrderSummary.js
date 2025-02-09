@@ -8,7 +8,7 @@ import { useNavigate } from "react-router";
 
 const CartOrderSummary = ({ cart }) => {
   // Context
-  const { deliveryCosts , setCart,setCartNumber} = useContext(CartContext);
+  const { deliveryCosts, setCart, setCartNumber } = useContext(CartContext);
   const { fetchUserDetails } = useContext(AuthContext);
   const { handleCreateOrder } = useContext(OrderContext);
 
@@ -21,7 +21,7 @@ const CartOrderSummary = ({ cart }) => {
 
   // Calculations
   const subtotal = cart.reduce((acc, item) => acc + parseInt(item.price) * item.quantity, 0);
-  const deliveryCharge = deliveryMethod === "standard" ? deliveryCosts.standard : deliveryCosts.express;
+  const deliveryCharge = deliveryMethod === "Standard" ? deliveryCosts.Standard : deliveryCosts.Express;
   const totalAmount = subtotal + deliveryCharge;
 
   useEffect(() => {
@@ -32,32 +32,38 @@ const CartOrderSummary = ({ cart }) => {
     loadPincode();
   }, []);
   const handleCheckout = async () => {
-        if (paymentMethod === 'cod') {
-            const newOrder = {
-                itemsOrdered: cart.map(item=>{return {productId: item._id, quantity: item.quantity, price: parseInt(item.price)}}),
-                orderStatus: "Pending",
-                shippingMethod: deliveryMethod,
-            }
-            try{
-              const response = await handleCreateOrder(newOrder);
-              if (!response.success) {
-                  console.log(response.message);
-                  throw new Error(response.message);
-              }
-              toast.success('Order placed sucessfully!');
-              navigate('/profilePage')
-              setCart([]);
-              setCartNumber(0)
-            }catch(error){
-              toast.error('Order placement failed');
-            }
-        } else {
-            toast.info('Online payment is not yet implemented');
+    if (paymentMethod === 'cod') {
+      const newOrder = {
+        itemsOrdered: cart.map(item => { return { productId: item._id, quantity: item.quantity, price: parseInt(item.price) } }),
+        orderStatus: "Pending",
+        shippingMethod: deliveryMethod,
+      }
+      try {
+        const response = await handleCreateOrder(newOrder);
+        if (!response.success) {
+          console.log(response.message);
+          throw new Error(response.message);
         }
+        toast.success('Order placed sucessfully!');
+        navigate('/profilePage')
+        setCart([]);
+        setCartNumber(0)
+      } catch (error) {
+        toast.error('Order placement failed');
+      }
+    } else {
+      toast.info('Online payment is not yet implemented');
+    }
 
-    };
+  };
   return (
     <div className="bg-white dark:bg-gray-900 shadow-lg rounded-2xl p-4">
+      <button
+        onClick={handleCheckout}
+        className="mb-3 w-full sm:hidden bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition text-sm"
+      >
+        Proceed to Checkout
+      </button>
       {/* Payment Method */}
       <div className="mb-3">
         <h4 className="font-medium text-base mb-2">Payment Method:</h4>
