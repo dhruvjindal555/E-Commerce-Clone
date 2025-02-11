@@ -8,6 +8,7 @@ import LoadingPage from '../LoadingPage';
 const Products = () => {
   const products = useLoaderData()
   const [filteredProducts, setFilteredProducts] = useState(products)
+  
   const [brands, setBrands] = useState([])
   useEffect(() => {
     if (products && products.length > 0) {

@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import Review from '../Review';
+import Review from '..//Review/Review';
+import ReviewsList from '../Review/ReviewsList';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
 import { useLoaderData, useNavigate } from 'react-router';
@@ -20,6 +21,7 @@ function ProductPage() {
     const [modelYear, setModelYear] = useState(2023);
     const [pincode, setPincode] = useState('');
     const [showAddReview, setShowAddReview] = useState(false);
+    const [reviewsRefresh, setReviewsRefresh] = useState(0);
     const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
     const [couponCode, setCouponCode] = useState('');
     const [quantity, setQuantity] = useState(1);
@@ -28,7 +30,11 @@ function ProductPage() {
     const [deliveryMethod, setDeliveryMethod] = useState('Standard'); // Default delivery method
     const [paymentMethod, setPaymentMethod] = useState('cod'); // Default payment method
 
-
+    // Callback when a review is added.
+    const handleReviewAdded = () => {
+        // Update the trigger to re-fetch the reviews.
+        setReviewsRefresh((prev) => prev + 1);
+    };
     const handlePincodeChange = (e) => {
         setPincode(e.target.value);
     };
@@ -121,13 +127,13 @@ function ProductPage() {
                                 toast.success(addToCart(data));
                                 console.log(cart);
                             }}
-                            className=" w-full bg-yellow-300 hover:bg-yellow-400 text-white text-lg font-bold py-2 px-4 rounded inline-flex items-center justify-center ">
+                            className=" w-full bg-yellow-300 hover:bg-yellow-400 text-white text-lg   font-bold py-1 px-2 sm:py-2 sm:px-4 rounded inline-flex items-center justify-center ">
                             <i className="fa-solid fa-cart-shopping pr-2"></i>
                             Add to cart
                         </button>
                         <button
                             onClick={handleBuyNow}
-                            className="w-full cursor-pointer bg-orange-300 hover:bg-orange-400 text-white text-lg font-bold py-2 px-4 rounded inline-flex items-center justify-center">
+                            className="w-full cursor-pointer bg-orange-300 hover:bg-orange-400 text-white text-lg font-bold py-1 px-2 sm:py-2 sm:px-4 rounded inline-flex items-center justify-center">
                             <i className="pr-2 fa-solid fa-bolt"></i>
                             Buy Now
                         </button>
@@ -239,28 +245,35 @@ function ProductPage() {
                             <span className='text-gray-700 font-semibold'>Description</span>
                             <p className="">{data.description}</p>
                         </div>
-                        <div className="p-6">
+                        <div className="md:p-3">
                             <div className="mt-6 border-t border-gray-200 pt-4">
                                 <h2 className="text-xl font-bold">Ratings & Reviews</h2>
                                 <div className="mt-2">
-                                    <button onClick={() => {
-                                        console.log(showAddReview);
-                                        setShowAddReview(true)
-                                    }} className="px-4 py-2 bg-gray-100 text-gray-800 rounded shadow">
+                                    <button
+                                        onClick={() => {
+                                            document.body.style.overflow = 'hidden';
+                                            setShowAddReview(true);
+                                        }}
+                                        className="px-4 py-2 bg-gray-100 text-gray-800 rounded shadow"
+                                    >
                                         Add Review
                                     </button>
                                 </div>
                             </div>
-                            {/* <div className="mt-8 border-t border-gray-200 pt-4">
-                                <h2 className="text-xl font-bold">Questions and Answers</h2>
-                                <div className="mt-2">
-                                    <button className="px-4 py-2 bg-gray-100 text-gray-800 rounded shadow">
-                                        + Add Question
-                                    </button>
-                                </div>
-                            </div> */}
+                            {/* Render the review modal */}
+                            <Review
+                                show={showAddReview}
+                                setShow={setShowAddReview}
+                                productId={data._id}
+                                onReviewAdded={handleReviewAdded}
+                            />
+                            {/* Render the list of reviews */}
+                            <ReviewsList
+                                productId={data._id}
+                                currentUserId={userDetails?._id}
+                                refreshTrigger={reviewsRefresh}
+                            />
                         </div>
-                        <Review showAddReview={showAddReview} setShowAddReview={setShowAddReview} />
                     </div>
                 </div>
             </div>

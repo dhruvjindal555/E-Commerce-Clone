@@ -66,8 +66,8 @@ exports.updateUserDetails = async (req, res) => {
         // Validate incoming data against the schema (excluding profileUrl)
         // console.log(req.body);        
         const { error } = userSchema.validate(req.body);
-        console.log(error);        
         if (error) {
+            console.log(error);        
             return res.status(400).json({ message: error.details.map(err=>err.message) });
         }
 
@@ -99,7 +99,7 @@ exports.uploadProfileImage = async (req, res) => {
 
         console.log('Uploaded File Details:', req.file);
 
-        // ✅ Return Cloudinary's secure URL
+        // Return Cloudinary's secure URL
         return res.status(200).json({ profileUrl: req.file.path });
     } catch (error) {
         console.error('Error uploading image:', error);

@@ -25,6 +25,8 @@ import AuthState from "./context/AuthContext/AuthState";
 import OrderState from "./context/OrderContext/OrderState";
 import LoadingState from "./context/LoadingContext/LoadingState";
 import Error404 from "./Components/Error404";
+import WishlistContext from "./context/WishlistContext.js/WishlistContext";
+import WishlistState from "./context/WishlistContext.js/WishlistState";
 
 
 const router = createBrowserRouter(
@@ -53,25 +55,27 @@ const router = createBrowserRouter(
 function App() {
   return (
     <LoadingState>
-      <CartState>
-        <AuthState>
-          <OrderState>
-            <ToastContainer
-              position="top-right"
-              autoClose={2000}
-              hideProgressBar={false}
-              newestOnTop={false}
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss={false}
-              draggable
-              pauseOnHover={false}
-              theme="dark"
-            />
-            <RouterProvider router={router} />
-          </OrderState>
-        </AuthState>
-      </CartState>
+      <WishlistState>
+        <CartState>
+          <AuthState>
+            <OrderState>
+              <ToastContainer
+                position="top-right"
+                autoClose={2000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss={false}
+                draggable
+                pauseOnHover={false}
+                theme="dark"
+              />
+              <RouterProvider router={router} />
+            </OrderState>
+          </AuthState>
+        </CartState>
+      </WishlistState>
     </LoadingState>
   );
 }
