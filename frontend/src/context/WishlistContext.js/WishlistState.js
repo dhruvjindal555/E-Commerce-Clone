@@ -1,11 +1,11 @@
-import React,{ useContext,useEffect,useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import WishlistContext from './WishlistContext'
 import LoadingContext from '../LoadingContext/LoadingContext';
 
 
 function WishlistState({ children }) {
     const [wishlist, setWishlist] = useState([]);
-    const {loading, setLoading} = useContext(LoadingContext);
+    const { setLoading } = useContext(LoadingContext);
 
     // Function to fetch the current user's wishlist.
     const getWishlist = async () => {
@@ -22,18 +22,18 @@ function WishlistState({ children }) {
             const data = await response.json();
             setLoading(false);
             if (response.ok) {
+                console.log(data);
                 // The backend sends an object like { wishlist: [...] }
                 setWishlist(data.wishlist);
             } else {
-                throw new Error (data.message || "Failed to fetch wishlist")
+                throw new Error(data.message || "Failed to fetch wishlist")
             }
         } catch (error) {
             setLoading(false);
-            console.error("Server error.",error);
-            throw new Error (error)
+            console.error("Server error.", error);
         }
     };
-    
+
     // Function to add a product to the wishlist.
     const addToWishlist = async (productId) => {
         try {
@@ -51,20 +51,20 @@ function WishlistState({ children }) {
                 // Update the local state with the new wishlist array
                 setWishlist(data.wishlist);
             } else {
-                throw new Error (data.message || "Failed to add product to wishlist")
+                throw new Error(data.message || "Failed to add product to wishlist")
             }
         } catch (error) {
-            console.error("Server error.",error);
-            throw new Error (error)
+            console.error("Server error.", error);
+            throw new Error(error)
         }
     };
-    
+
     // Function to remove a product from the wishlist.
     const removeFromWishlist = async (productId) => {
         try {
             const token = localStorage.getItem('authToken');
             const response = await fetch('http://localhost:8888/wishlist/remove', {
-                method: 'DELETE',
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     'authToken': token,
@@ -76,17 +76,27 @@ function WishlistState({ children }) {
                 // Update the local state with the new wishlist array
                 setWishlist(data.wishlist);
             } else {
-                throw new Error (data.message || "Failed to remove product from wishlist")
+                throw new Error(data.message || "Failed to remove product from wishlist")
             }
-        } catch (error) {
-            console.error("Server error.",error);
-            throw new Error (error)
+        } catch (error) {   
+            console.error("Server error.", error);
+            throw new Error(error)
         }
     };
 
     // Optionally, load the wishlist when the provider mounts (if the user is logged in)
     useEffect(() => {
-        getWishlist();
+        const fetchWishlist = async () => {
+            if (window.localStorage.getItem('authToken')) {
+                try {
+                    // This will fetch the wishlist and update the context state.
+                    await getWishlist();
+                } catch (error) {
+                    console.error("Error fetching wishlist:", error);
+                }
+            }
+        }
+        fetchWishlist()
     }, []);
     return (
         <WishlistContext.Provider

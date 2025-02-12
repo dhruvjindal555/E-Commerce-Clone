@@ -4,13 +4,15 @@ import ProductsItem from './ProductsItem';
 import { useLoaderData } from 'react-router';
 import LoadingContext from '../../context/LoadingContext/LoadingContext';
 import LoadingPage from '../LoadingPage';
+import WishlistContext from '../../context/WishlistContext.js/WishlistContext';
 
 const Products = () => {
   const products = useLoaderData()
   const [filteredProducts, setFilteredProducts] = useState(products)
-  
+
   const [brands, setBrands] = useState([])
   useEffect(() => {
+    
     if (products && products.length > 0) {
       const uniqueBrands = new Set(products.map(product => product.brand));
       let brandsArray = [...uniqueBrands];
@@ -21,7 +23,7 @@ const Products = () => {
       console.log("BrandsArray", brandsArray);
     }
     // const sortedProducts = [...products].sort((a, b) =>
-      // b.price - a.price
+    // b.price - a.price
     // );
     // console.log('Sorted Products:', sortedProducts);
     setFilteredProducts(products)

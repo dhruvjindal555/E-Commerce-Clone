@@ -47,6 +47,7 @@ function Review({ show, setShow, productId, onReviewAdded }) {
       formData.append("files", file);
     });
 
+    document.body.style.overflow = 'unset';
     try {
       // Get your JWT token (or however you manage auth)
       const token = localStorage.getItem('authToken');
@@ -65,7 +66,6 @@ function Review({ show, setShow, productId, onReviewAdded }) {
       if (response.ok) {
         toast.success(data.message);
         setShow(false);
-        document.body.style.overflow = 'unset';
         // Notify the parent so it can refresh the reviews list.
         if (onReviewAdded) onReviewAdded();
       } else {
