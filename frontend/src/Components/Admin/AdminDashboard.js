@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 function AdminDashboard() {
+  const navigate = useNavigate()
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
@@ -9,7 +11,15 @@ function AdminDashboard() {
   };
 
   const handleLogout = () => {
-    // Add your logout logic here (e.g., clearing tokens)
+
+    if (window.localStorage.getItem('authToken')) {
+      window.localStorage.removeItem('authToken');
+      window.localStorage.removeItem('cart');
+
+      toast.success('Logged Out Successfully');
+    }
+    navigate('/auth/login');
+
   };
 
   return (

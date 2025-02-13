@@ -67,6 +67,7 @@ const getAllReviews = async (req, res) => {
         res.status(500).json({ message: "Server Error", error });
     }
 };
+
 const deleteReview = async (req, res) => {
     try {
         const { reviewId } = req.params;

@@ -6,7 +6,7 @@ import LoadingContext from '../LoadingContext/LoadingContext';
 
 function OrdersState({ children }) {
     const [orders, setOrders] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const {loading, setLoading} = useContext(LoadingContext);
     const [error, setError] = useState(null);
     // const [newOrderData, setNewOrderData] = useState({})
     // const [orderIdToUpdate, setOrderIdToUpdate] = useState(null); // State for order ID to update

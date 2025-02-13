@@ -1,40 +1,14 @@
-import React, { useState } from "react";
-
-const dummyUsers = [
-  {
-    id: 1,
-    fullName: "John Doe",
-    email: "john.doe@example.com",
-    phoneNumber: "9876543210",
-    lastLoginDate: "2024-02-10",
-    profileUrl: "https://via.placeholder.com/50",
-    address: {
-      street: "123 Main St",
-      city: "New York",
-      state: "NY",
-      pinCode: "10001",
-      country: "USA",
-    },
-  },
-  {
-    id: 2,
-    fullName: "Jane Smith",
-    email: "jane.smith@example.com",
-    phoneNumber: "9123456789",
-    lastLoginDate: "2024-02-08",
-    profileUrl: "https://via.placeholder.com/50",
-    address: {
-      street: "456 Elm St",
-      city: "Los Angeles",
-      state: "CA",
-      pinCode: "90001",
-      country: "USA",
-    },
-  },
-];
+import React, { useContext, useEffect, useState } from "react";
+import LoadingContext from "../../context/LoadingContext/LoadingContext";
+import LoadingPage from "../LoadingPage";
+import { toast } from "react-toastify";
+import { FaUserCircle } from "react-icons/fa";
+import AuthContext from "../../context/AuthContext/AuthContext";
 
 const UserManagement = () => {
-  const [users, setUsers] = useState(dummyUsers);
+  const { loading, setLoading } = useContext(LoadingContext);
+  const { updateUserByAdmin,deleteUserByAdmin } = useContext(AuthContext);
+  const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -68,11 +42,28 @@ const UserManagement = () => {
     }));
   };
 
-  const saveChanges = () => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) => (user.id === selectedUser.id ? selectedUser : user))
-    );
-    closeModal();
+  const saveChanges = async () => {
+    try {
+      console.log(selectedUser);
+      const newUser = await updateUserByAdmin(selectedUser)
+      setUsers((prevUsers) =>
+        prevUsers.map((user) => (user._id === selectedUser._id ? newUser.user : user))
+      );
+      closeModal();
+      toast.success('User details updated successfully')
+    } catch (error) {
+      toast.error(error.message)
+    }
+  };
+
+  const deleteUser = async (userId) => {
+    try {
+      await deleteUserByAdmin(userId);
+      setUsers((prevUsers) => prevUsers.filter((user) => user._id !== userId));
+      toast.success('User deleted successfully')
+    } catch (error) {
+      toast.error(error.message)
+    }
   };
 
   const filteredUsers = users.filter(
@@ -80,6 +71,45 @@ const UserManagement = () => {
       user.fullName.toLowerCase().includes(searchQuery.toLowerCase()) ||
       user.email.toLowerCase().includes(searchQuery.toLowerCase())
   );
+  // console.log(filteredUsers);  
+
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch("http://localhost:8888/user/users", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            authToken: window.localStorage.getItem("authToken"),
+          },
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          setLoading(false);
+          console.log(data);
+          throw new Error("Failed to fetch users");
+        }
+
+        setLoading(false);
+        setUsers(data.users);
+        // console.log(data);        
+        if (data.success) {
+          return data.user;
+        } else {
+          throw new Error(data.message);
+        }
+      } catch (error) {
+        toast.error(error);
+        console.error("Error fetching user details:", error);
+      }
+    };
+    fetchUsers();
+  }, [setLoading]);
+
+  if (loading) return <LoadingPage />;
 
   return (
     <div className="container mx-auto p-4">
@@ -91,7 +121,9 @@ const UserManagement = () => {
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
       />
-      <div className="overflow-x-auto">
+
+      {/* Desktop Table View */}
+      <div className="hidden md:block overflow-x-auto">
         <table className="min-w-full border border-gray-300 shadow-lg rounded-lg">
           <thead>
             <tr className="bg-gray-200">
@@ -105,17 +137,42 @@ const UserManagement = () => {
           </thead>
           <tbody>
             {filteredUsers.map((user) => (
-              <tr key={user.id} className="cursor-pointer hover:bg-gray-100">
+              <tr key={user._id} className="hover:bg-gray-100">
                 <td className="border p-2 text-center">
-                  <img src={user.profileUrl} alt="Profile" className="w-10 h-10 rounded-full shadow-md" />
+                  {user.profileUrl ? (
+                    <img
+                      src={user.profileUrl}
+                      alt="Profile"
+                      className="w-12 h-12 rounded-full shadow-md"
+                    />
+                  ) : (
+                    <FaUserCircle className="text-gray-500 text-5xl" />
+                  )}
                 </td>
-                <td className="border p-2">{user.fullName}</td>
-                <td className="border p-2">{user.email}</td>
-                <td className="border p-2">{user.phoneNumber}</td>
-                <td className="border p-2">{user.lastLoginDate}</td>
                 <td className="border p-2">
-                  <button className="bg-blue-600 text-white px-3 py-1 rounded shadow-md" onClick={() => openModal(user)}>
+                  {user.fullName ? user.fullName : "Not available"}
+                </td>
+                <td className="border p-2">{user.email}</td>
+                <td className="border p-2">
+                  {user.phoneNumber ? user.phoneNumber : "Not available"}
+                </td>
+                <td className="border p-2">
+                  {user.lastLoginDate
+                    ? new Date(user.lastLoginDate).toLocaleString()
+                    : "Not available"}
+                </td>
+                <td className="border p-2 flex gap-2 justify-center">
+                  <button
+                    className="bg-blue-600 text-white px-3 py-1 rounded shadow-md"
+                    onClick={() => openModal(user)}
+                  >
                     Edit
+                  </button>
+                  <button
+                    className="bg-red-600 text-white px-3 py-1 rounded shadow-md"
+                    onClick={() => deleteUser(user._id)}
+                  >
+                    Delete
                   </button>
                 </td>
               </tr>
@@ -124,36 +181,227 @@ const UserManagement = () => {
         </table>
       </div>
 
+      {/* Mobile Card/List View */}
+      <div className="md:hidden grid gap-4">
+        {filteredUsers.map((user) => (
+          <div
+            key={user._id}
+            className="bg-white shadow rounded p-4 flex flex-col gap-2"
+          >
+            <div className="flex items-center gap-4">
+              {user.profileUrl ? (
+                <img
+                  src={user.profileUrl}
+                  alt="Profile"
+                  className="w-12 h-12 rounded-full shadow-md"
+                />
+              ) : (
+                <FaUserCircle className="text-gray-500 text-5xl" />
+              )}
+              <div>
+                <div className="font-bold">
+                  {user.fullName ? user.fullName : "Not available"}
+                </div>
+                <div className="text-sm text-gray-500">{user.email}</div>
+              </div>
+            </div>
+            <div className="text-sm">
+              <span className="font-bold">Phone: </span>
+              {user.phoneNumber ? user.phoneNumber : "Not available"}
+            </div>
+            <div className="text-sm">
+              <span className="font-bold">Last Login: </span>
+              {user.lastLoginDate
+                ? new Date(user.lastLoginDate).toLocaleString()
+                : "Not available"}
+            </div>
+            <div className="mt-2 flex gap-2 justify-end">
+              <button
+                onClick={() => openModal(user)}
+                className="bg-blue-600 text-white px-3 py-1 rounded shadow-md"
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => deleteUser(user._id)}
+                className="bg-red-600 text-white px-3 py-1 rounded shadow-md"
+              >
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Modal */}
       {isModalOpen && selectedUser && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-2xl shadow-2xl w-[80vw] max-w-4xl transform scale-105 flex flex-col">
-            <h3 className="text-lg font-bold mb-4">Edit User</h3>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block font-semibold">Full Name</label>
-                <input type="text" name="fullName" value={selectedUser.fullName} onChange={handleInputChange} className="w-full p-2 border rounded-lg shadow-sm" />
-                <label className="block font-semibold">Email</label>
-                <input type="email" name="email" value={selectedUser.email} onChange={handleInputChange} className="w-full p-2 border rounded-lg shadow-sm" />
-                <label className="block font-semibold">Phone Number</label>
-                <input type="text" name="phoneNumber" value={selectedUser.phoneNumber} onChange={handleInputChange} className="w-full p-2 border rounded-lg shadow-sm" />
-              </div>
-              <div>
-                <h4 className="font-bold">Address</h4>
-                <label className="block font-semibold">Street</label>
-                <input type="text" name="street" value={selectedUser.address.street} onChange={handleAddressChange} className="w-full p-2 border rounded-lg shadow-sm" />
-                <label className="block font-semibold">City</label>
-                <input type="text" name="city" value={selectedUser.address.city} onChange={handleAddressChange} className="w-full p-2 border rounded-lg shadow-sm" />
-                <label className="block font-semibold">State</label>
-                <input type="text" name="state" value={selectedUser.address.state} onChange={handleAddressChange} className="w-full p-2 border rounded-lg shadow-sm" />
-              </div>
-            </div>
-            <div className="flex justify-end space-x-2 mt-4">
-              <button className="bg-gray-400 px-4 py-2 rounded shadow-md" onClick={closeModal}>Cancel</button>
-              <button className="bg-blue-600 text-white px-4 py-2 rounded shadow-md" onClick={saveChanges}>Save</button>
-            </div>
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50 p-4">
+          <div className="bg-white rounded-xl shadow-lg w-full max-w-md md:max-w-2xl max-h-[90vh] overflow-y-auto">
+            <header className="px-6 py-4 border-b sticky top-0 bg-white z-10">
+              <h3 className="text-2xl font-semibold text-gray-800">Edit User</h3>
+            </header>
+
+            <main className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+              <section>
+                <div className="mb-3">
+                  <label
+                    htmlFor="fullName"
+                    className="block text-gray-700 text-sm font-bold mb-1"
+                  >
+                    Full Name
+                  </label>
+                  <input
+                    type="text"
+                    id="fullName"
+                    name="fullName"
+                    value={selectedUser.fullName}
+                    onChange={handleInputChange}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label
+                    htmlFor="email"
+                    className="block text-gray-700 text-sm font-bold mb-1"
+                  >
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={selectedUser.email}
+                    onChange={handleInputChange}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label
+                    htmlFor="phoneNumber"
+                    className="block text-gray-700 text-sm font-bold mb-1"
+                  >
+                    Phone Number
+                  </label>
+                  <input
+                    type="text"
+                    id="phoneNumber"
+                    name="phoneNumber"
+                    value={selectedUser.phoneNumber}
+                    onChange={handleInputChange}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+              </section>
+
+              <section>
+                <h4 className="font-semibold text-gray-800 mb-2">Address</h4>
+                <div className="mb-3">
+                  <label
+                    htmlFor="street"
+                    className="block text-gray-700 text-sm font-bold mb-1"
+                  >
+                    Street
+                  </label>
+                  <input
+                    type="text"
+                    id="street"
+                    name="street"
+                    value={selectedUser.address.street}
+                    onChange={handleAddressChange}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label
+                    htmlFor="city"
+                    className="block text-gray-700 text-sm font-bold mb-1"
+                  >
+                    City
+                  </label>
+                  <input
+                    type="text"
+                    id="city"
+                    name="city"
+                    value={selectedUser.address.city}
+                    onChange={handleAddressChange}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label
+                    htmlFor="state"
+                    className="block text-gray-700 text-sm font-bold mb-1"
+                  >
+                    State
+                  </label>
+                  <input
+                    type="text"
+                    id="state"
+                    name="state"
+                    value={selectedUser.address.state}
+                    onChange={handleAddressChange}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label
+                    htmlFor="pinCode"
+                    className="block text-gray-700 text-sm font-bold mb-1"
+                  >
+                    Pin Code
+                  </label>
+                  <input
+                    type="text"
+                    id="pinCode"
+                    name="pinCode"
+                    value={selectedUser.address.pinCode}
+                    onChange={handleAddressChange}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+
+                <div className="mb-3">
+                  <label
+                    htmlFor="country"
+                    className="block text-gray-700 text-sm font-bold mb-1"
+                  >
+                    Country
+                  </label>
+                  <input
+                    type="text"
+                    id="country"
+                    name="country"
+                    value={selectedUser.address.country}
+                    onChange={handleAddressChange}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  />
+                </div>
+              </section>
+            </main>
+
+            <footer className="px-6 py-4 bg-gray-50 flex justify-end items-center space-x-3 sticky bottom-0  z-10">
+              <button
+                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                onClick={closeModal}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                onClick={saveChanges}
+              >
+                Save Changes
+              </button>
+            </footer>
           </div>
         </div>
       )}
+
     </div>
   );
 };

@@ -1,8 +1,11 @@
 import React, { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import OrderContext from "../../context/OrderContext/OrderContext";
+import LoadingContext from "../../context/LoadingContext/LoadingContext";
+import LoadingPage from "../LoadingPage";
 
 const OrderManagement = () => {
+  const {loading, setLoading} = useContext(LoadingContext)
   const { orders, handleUpdateOrder, handleDeleteOrder } = useContext(OrderContext);
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
@@ -58,7 +61,7 @@ const OrderManagement = () => {
       (endDate ? new Date(order.createdAt) <= new Date(endDate) : true) &&
       (userSearch ? order.userId.includes(userSearch) : true)
   );
-
+  if (loading)  return <LoadingPage/>
   return (
     <div className="p-4 w-full">
       <div className="flex items-center justify-between">

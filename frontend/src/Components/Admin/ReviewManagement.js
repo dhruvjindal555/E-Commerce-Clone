@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import LoadingContext from "../../context/LoadingContext/LoadingContext";
+import LoadingPage from "../LoadingPage";
 
 
 const ReviewManagement = () => {
+  const {loading, setLoading} = useContext(LoadingContext)
   const [reviews, setReviews] = useState([]);
   const [searchUser, setSearchUser] = useState("");
   const [searchProduct, setSearchProduct] = useState("");
@@ -10,12 +13,14 @@ const ReviewManagement = () => {
 
   const deleteReview = async (id) => {
     try {
+      setLoading(true)
       const response = await fetch(`http://localhost:8888/review/${id}`, {
         method: 'DELETE',
         headers: {
           'authToken': window.localStorage.getItem('authToken')
         }
       })
+      setLoading(false)
       const data = await response.json()
       if (!response.ok) {
         throw new Error(data.message || "Error deleting review")
@@ -29,17 +34,19 @@ const ReviewManagement = () => {
     }  
   };
 
-
-
+  
+  
   useEffect(() => {
     try {
       const fetchReviews = async () => {
+        setLoading(true)
         const response = await fetch('http://localhost:8888/review', {
           method: 'GET',
           headers: {
             'authToken': window.localStorage.getItem('authToken')
           }
         })
+        setLoading(false)
         const data = await response.json()
         if (!response.ok) {
           throw new Error(data.message || "Error fetching all reviews")
@@ -56,9 +63,10 @@ const ReviewManagement = () => {
   const filteredReviews = reviews.filter(
     (review) =>
       (searchUser ? review.user.fullName.toLowerCase().includes(searchUser.toLowerCase()) : true) &&
-      (searchProduct ? review.product?.name.toLowerCase().includes(searchProduct.toLowerCase()) : true) &&
-      (filterRating ? review.rating === Number(filterRating) : true)
+    (searchProduct ? review.product?.name.toLowerCase().includes(searchProduct.toLowerCase()) : true) &&
+    (filterRating ? review.rating === Number(filterRating) : true)
   );
+  if (loading) return <LoadingPage/>
   return (
     <div className="p-4 w-full">
       <h2 className="text-2xl font-bold mb-4">Review Management</h2>

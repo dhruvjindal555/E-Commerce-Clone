@@ -3,7 +3,7 @@ import AuthContext from './AuthContext'
 import LoadingContext from '../LoadingContext/LoadingContext'
 
 function AuthState(props) {
-  const {loading, setLoading} = useContext(LoadingContext)
+  const { loading, setLoading } = useContext(LoadingContext)
   const [credentials, setCredentials] = useState({
     email: "",
     password: ""
@@ -77,7 +77,7 @@ function AuthState(props) {
 
       const data = await response.json();
       setLoading(false)
-      setUserDetails(()=>data.user);
+      setUserDetails(() => data.user);
       // console.log(data);      
       if (data.success) {
         return data.user;
@@ -128,8 +128,73 @@ function AuthState(props) {
         throw error.errors[0];
       } else {
         throw error; // Re-throw the error so that handleSubmit can process it
-
       }
+    }
+  };
+  const updateUserByAdmin = async (userData) => {
+    try {
+      setLoading(true)
+      const response = await fetch(`http://localhost:8888/user/${userData._id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'authToken': window.localStorage.getItem('authToken')
+        },
+        body: JSON.stringify({
+          fullName: userData.fullName,
+          email: userData.email,
+          phoneNumber: userData.phoneNumber,
+          address: {
+            street: userData.address.street,
+            city: userData.address.city,
+            state: userData.address.state || '', // Optional
+            pinCode: userData.address.pinCode,
+            country: userData.address.country
+          },
+          profileUrl: userData.profileUrl || '' // Optional
+        })
+      });
+
+      const responseData = await response.json(); // Always parse the response first
+      setLoading(false)
+      console.log(responseData);
+      if (!response.ok) {
+        throw new Error(responseData.message || 'Update failed'); // Throw an error with the server message
+      }
+
+      return responseData;
+    } catch (error) {
+      console.error('Error updating user details:', error);
+      if (error.errors && Array.isArray(error.errors)) {
+        throw error.errors[0];
+      } else {
+        throw error; // Re-throw the error so that handleSubmit can process it
+      }
+    }
+  };
+  const deleteUserByAdmin = async (id) => {
+    try {
+      setLoading(true)
+      const response = await fetch(`http://localhost:8888/user/${id}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'authToken': window.localStorage.getItem('authToken')
+        }
+      });
+
+      if (!response.ok) {
+        setLoading(false)
+        throw new Error('Failed to delete user');
+      }
+
+      await response.json();
+      setLoading(false)
+      // console.log(data);      
+
+    } catch (error) {
+      console.error('Error deleting user details:', error);
+      throw new Error(error.message)
     }
   };
   useEffect(() => {
@@ -148,7 +213,9 @@ function AuthState(props) {
       handleLogIn,
       handleSignUp,
       fetchUserDetails,
-      updateUserDetails
+      updateUserDetails,
+      updateUserByAdmin,
+      deleteUserByAdmin
     }} >
       {props.children}
     </AuthContext.Provider>
