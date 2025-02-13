@@ -27,7 +27,13 @@ import LoadingState from "./context/LoadingContext/LoadingState";
 import Error404 from "./Components/Error404";
 import WishlistContext from "./context/WishlistContext.js/WishlistContext";
 import WishlistState from "./context/WishlistContext.js/WishlistState";
-
+import Dashboard from "./Components/Admin/Dashboard ";
+import AdminDashboard from "./Components/Admin/AdminDashboard";
+import WishlistManagement from "./Components/Admin/WishlistManagement"
+import ProductManagement from "./Components/Admin/ProductManagement"
+import UserManagement from "./Components/Admin/UserManagement"
+import ReviewManagement from "./Components/Admin/ReviewManagement"
+import OrderManagement from "./Components/Admin/OrderManagement"
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -43,6 +49,16 @@ const router = createBrowserRouter(
       </Route >
       {/* Routes with No Categories Layout */}
       <Route path="Contact" element={<><Navbar /><Contact /><Footer /></>} />
+      <Route path="/admin" element={<AdminDashboard />}>
+        {/* Default route */}
+        <Route index element={<Dashboard />} />
+        <Route path="dashboard" element={<Dashboard />} />
+        <Route path="wishlist" element={<WishlistManagement />} />
+        <Route path="products" element={<ProductManagement />} />
+        <Route path="users" element={<UserManagement />} />
+        <Route path="reviews" element={<ReviewManagement />} />
+        <Route path="orders" element={<OrderManagement />} />
+      </Route>
       <Route path="auth" element={<AuthLayout />}>
         <Route path="login" element={<LogIn />} />
         <Route path="signup" element={<SignUp />} />

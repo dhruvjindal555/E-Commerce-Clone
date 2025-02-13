@@ -1,12 +1,45 @@
-import React, { useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import CartContext from '../../context/CartContext/CartContext';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
 import { useNavigate } from 'react-router-dom';
+import WishlistContext from '../../context/WishlistContext.js/WishlistContext';
+import { toast } from 'react-toastify';
 
 const CartItem = ({ product, index }) => {
+  const { wishlist, addToWishlist, removeFromWishlist } = useContext(WishlistContext);
+  const [liked, setLiked] = useState(false);
   const navigate = useNavigate();
   const { removeFromCart, decrementQuantity, incrementQuantity } = useContext(CartContext);
+  const handleLike = async () => {
+    if (liked == true) {
+      try {
+        await removeFromWishlist(product._id)
+        toast.success('Removed from wishlist')
+      } catch (error) {
+        toast.error('Failed to remove from wishlist')
+        console.error("Error removing from wishlist:", error);
+      }
+    } else {
+      try {
+        await addToWishlist(product._id)
+        toast.success('Added to wishlist')
+      } catch (error) {
+        toast.error('Failed to add to wishlist')
+        console.error("Error adding to wishlist:", error);
+      }
+    }
+  }
+  useEffect(() => {
+    // console.log('Wishlist changing');
+    // console.log(wishlist)
+    // Check if the current product exists in the wishlist using .some()
+    const isLiked = wishlist.some((val) => {
+      // console.log(String(val._id), String(product._id));
+      return String(val._id) === String(product._id)
+    });
+    setLiked(isLiked);
+  }, [wishlist, product._id]); // Run this effect when wishlist or product._id changes
 
   const handleClick = () => {
     navigate(`/${product.mainCategory}/${product.subCategory}/${product._id}`);
@@ -43,9 +76,21 @@ const CartItem = ({ product, index }) => {
           <h2 onClick={handleClick} className="text-base md:text-lg font-semibold cursor-pointer">
             {product.name}
           </h2>
-          <div className="flex items-center mt-1">
+          <div className="flex items-center mt-1 gap-2">
             <span className="text-sm md:text-base font-bold">{product.brand}</span>
-            <button className="ml-2 text-gray-500 text-xs md:text-sm">❤️</button>
+            <svg
+              onClick={handleLike}
+              xmlns="http://www.w3.org/2000/svg"
+              className="cursor-pointer"
+              height="20"
+              width="20"
+              viewBox="0 0 512 512"
+            >
+              <path
+                fill={liked ? "#ff0000" : ""}
+                d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"
+              />
+            </svg>
           </div>
           {/* Extra details: only visible on desktop */}
           <div className="hidden md:block mt-2">
@@ -59,7 +104,7 @@ const CartItem = ({ product, index }) => {
               ))}
             </ul>
           </div>
-        </div> 
+        </div>
 
         {/* Column 3: Pricing and Quantity Controls */}
         <div className="mt-3 md:mt-0 text-right">

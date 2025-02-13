@@ -1,5 +1,6 @@
 const Review = require("../Models/ReviewSchema")
 const Product = require("../Models/ProductSchema")
+const User = require("../Models/UserSchema")
 const cloudinary = require("../config/cloudinary")
 
 const createReview = async (req, res) => {
@@ -55,12 +56,23 @@ const getProductReviews = async (req, res) => {
     }
 };
 
+const getAllReviews = async (req, res) => {
+    try {
+        const reviews = await Review.find()
+            .populate("user", "fullName").populate('product','name')
+            .sort({ createdAt: -1 });
 
+        res.status(200).json(reviews);
+    } catch (error) {
+        res.status(500).json({ message: "Server Error", error });
+    }
+};
 const deleteReview = async (req, res) => {
     try {
         const { reviewId } = req.params;
         const userId = req.user.id;
-        // const userRole = req.user.role;
+        const user = await User.findById(userId);
+        const userRole = user.role;
 
         const review = await Review.findById(reviewId);
         if (!review) {
@@ -68,14 +80,14 @@ const deleteReview = async (req, res) => {
         }
 
         // Only admin or the user who created the review can delete it
-        // if (review.user.toString() !== userId && userRole !== "admin") {
-        //     return res.status(403).json({ message: "Unauthorized to delete this review." });
-        // }
-        
-        // Only admin or the user who created the review can delete it
-        if (review.user.toString() !== userId ) {
+        if (review.user.toString() !== userId && userRole !== "admin") {
             return res.status(403).json({ message: "Unauthorized to delete this review." });
         }
+        
+        // Only admin or the user who created the review can delete it
+        // if (review.user.toString() !== userId ) {
+        //     return res.status(403).json({ message: "Unauthorized to delete this review." });
+        // }
 
         // Delete images from Cloudinary
         if (review.images.length > 0) {
@@ -93,4 +105,4 @@ const deleteReview = async (req, res) => {
     }
 };
 
-module.exports = { createReview, getProductReviews, deleteReview };
+module.exports = { createReview,getAllReviews, getProductReviews, deleteReview };

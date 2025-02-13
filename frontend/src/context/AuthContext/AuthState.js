@@ -44,9 +44,8 @@ function AuthState(props) {
       })
       const data = await response.json()
       setLoading(false)
-      const { success, message, authToken } = data
+      const { success, message } = data
       if (success) {
-        localStorage.setItem("authToken", authToken)
         console.log(message);
         setCredentials({
           email: "",

@@ -39,7 +39,8 @@ const userSchema = Joi.object({
             'string.empty': 'Country is required',
             'any.required': 'Country is required'
         })
-    }).required()
+    }).required(),
+    role: Joi.string().optional()
 });
 
 // Fetch user details by ID
@@ -67,8 +68,8 @@ exports.updateUserDetails = async (req, res) => {
         // console.log(req.body);        
         const { error } = userSchema.validate(req.body);
         if (error) {
-            console.log(error);        
-            return res.status(400).json({ message: error.details.map(err=>err.message) });
+            console.log(error);
+            return res.status(400).json({ message: error.details.map(err => err.message) });
         }
 
         // Update user details

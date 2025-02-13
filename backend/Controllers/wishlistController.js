@@ -26,6 +26,7 @@ const addToWishlist = async (req, res) => {
 
         wishlist.items.push(productId);
         await wishlist.save();
+        await wishlist.populate('items')
 
         res.status(200).json({ message: "Product added to wishlist", wishlist: wishlist.items });
     } catch (error) {
@@ -39,13 +40,14 @@ const removeFromWishlist = async (req, res) => {
         const userId = req.user.id;
         const { productId } = req.body;
 
-        const wishlist = await Wishlist.findOne({ user: userId });
+        const wishlist = await Wishlist.findOne({ user: userId })
         if (!wishlist) {
             return res.status(404).json({ message: "Wishlist not found" });
         }
 
         wishlist.items = wishlist.items.filter(id => id.toString() !== productId);
         await wishlist.save();
+        await wishlist.populate('items')
 
         res.status(200).json({ message: "Product removed from wishlist", wishlist: wishlist.items });
     } catch (error) {

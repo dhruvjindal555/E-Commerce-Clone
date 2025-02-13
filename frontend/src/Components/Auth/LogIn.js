@@ -9,8 +9,8 @@ import LoadingContext from '../../context/LoadingContext/LoadingContext';
 import LoadingPage from '../LoadingPage';
 
 function LogIn() {
-  const { credentials, setCredentials, handleLogIn } = useContext(AuthContext)
-  const {loading, setLoading} = useContext(LoadingContext)
+  const { userDetails, credentials, setCredentials, handleLogIn } = useContext(AuthContext)
+  const { loading, setLoading } = useContext(LoadingContext)
   const navigate = useNavigate()
 
   const onChange = (event) => {
@@ -24,13 +24,17 @@ function LogIn() {
     e.preventDefault();
     const { success, message } = await handleLogIn()
     if (success == true) {
+      console.log(userDetails);      
+      if (userDetails?.role === 'admin') {
+        return navigate('/admin')
+      }
       toast.success('Logged In Successfully!');
       navigate('/')
     } else {
       toast.error(message);
     }
   }
-  if (loading) return <LoadingPage/>
+  if (loading) return <LoadingPage />
   return (
     <>
       <div>

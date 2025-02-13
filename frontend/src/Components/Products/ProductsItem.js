@@ -17,17 +17,15 @@ const ProductsItem = ({ product }) => {
         if (liked == true) {
             try {
                 await removeFromWishlist(product._id)
-                setLiked(false);
                 toast.success('Removed from wishlist')
             } catch (error) {
                 toast.error('Failed to remove from wishlist')
                 console.error("Error removing from wishlist:", error);
             }
-        }else{
+        } else {
             try {
                 await addToWishlist(product._id)
                 toast.success('Added to wishlist')
-                setLiked(true);
             } catch (error) {
                 toast.error('Failed to add to wishlist')
                 console.error("Error adding to wishlist:", error);
@@ -35,10 +33,13 @@ const ProductsItem = ({ product }) => {
         }
     }
     useEffect(() => {
-        console.log('Wishlist changing');     
-        console.log(wishlist)   
+        // console.log('Wishlist changing');
+        // console.log(wishlist)
         // Check if the current product exists in the wishlist using .some()
-        const isLiked = wishlist.some((val) => val._id === product._id);
+        const isLiked = wishlist.some((val) => {
+            // console.log(String(val._id), String(product._id));
+            return String(val._id) === String(product._id)
+        });
         setLiked(isLiked);
     }, [wishlist, product._id]); // Run this effect when wishlist or product._id changes
 

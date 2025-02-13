@@ -11,8 +11,11 @@ import LoadingPage from '../LoadingPage';
 import { toast } from 'react-toastify';
 import AuthContext from '../../context/AuthContext/AuthContext';
 import LoadingContext from '../../context/LoadingContext/LoadingContext';
+import WishlistContext from '../../context/WishlistContext.js/WishlistContext';
 
 function ProductPage() {
+    const { wishlist, addToWishlist, removeFromWishlist } = useContext(WishlistContext);
+    const [liked, setLiked] = useState(false);
     const navigate = useNavigate()
     const { loading } = useContext(LoadingContext)
     const { addToCart, cart, deliveryCosts } = useContext(CartContext)
@@ -87,6 +90,36 @@ function ProductPage() {
         }
 
     };
+    const handleLike = async () => {
+        if (liked == true) {
+            try {
+                await removeFromWishlist(data._id)
+                toast.success('Removed from wishlist')
+            } catch (error) {
+                toast.error('Failed to remove from wishlist')
+                console.error("Error removing from wishlist:", error);
+            }
+        } else {
+            try {
+                await addToWishlist(data._id)
+                toast.success('Added to wishlist')
+            } catch (error) {
+                toast.error('Failed to add to wishlist')
+                console.error("Error adding to wishlist:", error);
+            }
+        }
+    }
+    useEffect(() => {
+        // console.log('Wishlist changing');
+        // console.log(wishlist)
+        // Check if the current product exists in the wishlist using .some()
+        const isLiked = wishlist.some((val) => {
+            // console.log(String(val._id), String(product._id));
+            return String(val._id) === String(data._id)
+        });
+        setLiked(isLiked);
+    }, [wishlist, data._id]); // Run this effect when wishlist or product._id changes
+
     useEffect(() => {
         window.scrollTo(0, 0)
     }, [])
@@ -141,8 +174,25 @@ function ProductPage() {
                 </div>
                 <div className="flex flex-col justify-start py-5">
                     <div className="px-4 py-2 flex flex-col">
-                        <div className="uppercase text-gray-600 mb-3 tracking-wide text-xl font-bold">
-                            {data.brand}
+                        <div className='flex  justify-between'>
+                            <div className="uppercase text-gray-600 mb-3 tracking-wide text-xl font-bold">
+                                {data.brand}
+                            </div>
+                            <div>
+                                <svg
+                                    onClick={handleLike}
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    className="cursor-pointer"
+                                    height="20"
+                                    width="20"
+                                    viewBox="0 0 512 512"
+                                >
+                                    <path
+                                        fill={liked ? "#ff0000" : ""}
+                                        d="M47.6 300.4L228.3 469.1c7.5 7 17.4 10.9 27.7 10.9s20.2-3.9 27.7-10.9L464.4 300.4c30.4-28.3 47.6-68 47.6-109.5v-5.8c0-69.9-50.5-129.5-119.4-141C347 36.5 300.6 51.4 268 84L256 96 244 84c-32.6-32.6-79-47.5-124.6-39.9C50.5 55.6 0 115.2 0 185.1v5.8c0 41.5 17.2 81.2 47.6 109.5z"
+                                    />
+                                </svg>
+                            </div>
                         </div>
                         <div className="uppercase tracking-wide text-xl ">
                             {data.name}

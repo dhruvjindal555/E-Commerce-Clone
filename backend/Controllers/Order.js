@@ -13,8 +13,8 @@ const createOrder = async (req, res) => {
             ...req.body  // Spread operator to include other fields from request body
         })
         await newOrder.save();
-        const order =await newOrder.populate('itemsOrdered.productId');
-        console.log(order);        
+        const order = await newOrder.populate('itemsOrdered.productId');
+        console.log(order);
         if (user.email) await sendOrderConfirmationEmail(user.email, order);
         else throw new Error("User email not found");
         res.status(201).json({ success: true, newOrder });
@@ -25,6 +25,10 @@ const createOrder = async (req, res) => {
 const getAllOrders = async (req, res) => {
     try {
         const user = await User.findById(req.user.id)
+        if (user.role === 'admin') {
+            const orders = await Order.find().populate('itemsOrdered.productId');
+            return res.status(200).json({ success: true, orders });
+        }
         const orders = await Order.find({ userId: user._id }).populate('itemsOrdered.productId');
         res.status(200).json({ success: true, orders });
     } catch (error) {

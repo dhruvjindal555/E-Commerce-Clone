@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import CartContext from '../../context/CartContext/CartContext';
 import { toast } from 'react-toastify';
 import AuthContext from '../../context/AuthContext/AuthContext';
+import { FaUserCircle } from "react-icons/fa";
 
 function Navbar() {
   const { cartNumber } = useContext(CartContext);
@@ -28,6 +29,7 @@ function Navbar() {
   // Compute suggestions based on the search query.
   // It filters products whose name includes the search query (case-insensitive),
   // sorts them based on the position of the match, and takes the first 5.
+
   const suggestions =
     searchQuery.trim() === ""
       ? []
@@ -209,30 +211,36 @@ function Navbar() {
                   ? 'LogIn/SignUp'
                   : 'LogOut'}
               </div>
-              <div className="relative">
-                {cartNumber > 0 && (
-                  <span className="bg-red-600 absolute -top-2 text-sm -right-0 rounded-full px-1.5 font-bold">
-                    {cartNumber}
-                  </span>
-                )}
-                <div
-                  className="mx-2 cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-                  onClick={() => {
-                    console.log('Cart clicked');
-                    navigate('/cart');
-                  }}
-                >
-                  <i className="fa-solid fa-cart-shopping"></i>
+              {userDetails?.role === 'admin' ? <div></div> :
+                <div className="relative">
+                  {cartNumber > 0 && (
+                    <span className="bg-red-600 absolute -top-2 text-sm -right-0 rounded-full px-1.5 font-bold">
+                      {cartNumber}
+                    </span>
+                  )}
+                  <div
+                    className="mx-2 cursor-pointer text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                    onClick={() => {
+                      console.log('Cart clicked');
+                      navigate('/cart');
+                    }}
+                  >
+                    <i className="fa-solid fa-cart-shopping"></i>
+                  </div>
                 </div>
-              </div>
+              }
               {window.localStorage.getItem('authToken') ? (
-                <div>
+                <div className='pl-2'>
                   <Link to="/profilePage">
-                    <img
-                      src={userDetails.profileUrl}
-                      alt="Profile"
-                      className="h-12 w-12 cursor-pointer rounded-full"
-                    />
+                    {
+                      userDetails.profileUrl ? (
+                        <img
+                          src={userDetails.profileUrl}
+                          alt="Profile"
+                          className="h-12 w-12 cursor-pointer rounded-full"
+                        />
+                      ) : <FaUserCircle className="text-gray-500 text-6xl " />
+                    }
                   </Link>
                 </div>
               ) : (
