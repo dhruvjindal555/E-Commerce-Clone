@@ -33,6 +33,31 @@ function WishlistState({ children }) {
             console.error("Server error.", error);
         }
     };
+    const getAllWishlist = async () => {
+        setLoading(true);
+        try {
+            const token = localStorage.getItem('authToken');
+            const response = await fetch('http://localhost:8888/wishlist', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'authToken': token,
+                },
+            });
+            const data = await response.json();
+            setLoading(false);
+            if (response.ok) {
+                console.log(data);
+                return data.wishlist
+            } else {
+                throw new Error(data.message || "Failed to all fetch wishlists")
+            }
+        } catch (error) {
+            setLoading(false);
+            console.error("Server error.", error);
+            throw new Error(error.message)
+        }
+    };
 
     // Function to add a product to the wishlist.
     const addToWishlist = async (productId) => {
@@ -103,6 +128,7 @@ function WishlistState({ children }) {
             value={{
                 wishlist,
                 getWishlist,
+                getAllWishlist,
                 addToWishlist,
                 removeFromWishlist,
             }} >

@@ -7,7 +7,7 @@ import AuthContext from "../../context/AuthContext/AuthContext";
 
 const UserManagement = () => {
   const { loading, setLoading } = useContext(LoadingContext);
-  const { updateUserByAdmin,deleteUserByAdmin } = useContext(AuthContext);
+  const { updateUserByAdmin, deleteUserByAdmin } = useContext(AuthContext);
   const [users, setUsers] = useState([]);
   const [selectedUser, setSelectedUser] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -138,15 +138,15 @@ const UserManagement = () => {
           <tbody>
             {filteredUsers.map((user) => (
               <tr key={user._id} className="hover:bg-gray-100">
-                <td className="border p-2 text-center">
+                <td className="border p-2 text-center ">
                   {user.profileUrl ? (
                     <img
                       src={user.profileUrl}
                       alt="Profile"
-                      className="w-12 h-12 rounded-full shadow-md"
+                      className={`w-12 h-12 rounded-full shadow-md  ${user.role === 'admin' ? 'border-4 border-red-600' : ""}`}
                     />
                   ) : (
-                    <FaUserCircle className="text-gray-500 text-5xl" />
+                    <FaUserCircle className={`text-gray-500 text-5xl ${user.role === 'admin' ? 'border-4 border-red-600 rounded-full' : ""}`} />
                   )}
                 </td>
                 <td className="border p-2">
@@ -208,6 +208,10 @@ const UserManagement = () => {
             <div className="text-sm">
               <span className="font-bold">Phone: </span>
               {user.phoneNumber ? user.phoneNumber : "Not available"}
+            </div>
+            <div className="text-sm">
+              <span className="font-bold">Role: </span>
+              {user.role ? String(user.role.split('').slice(0, 1).join('')).toLocaleUpperCase() + user.role.split('').slice(1).join('') : "Not available"}
             </div>
             <div className="text-sm">
               <span className="font-bold">Last Login: </span>

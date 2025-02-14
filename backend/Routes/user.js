@@ -8,9 +8,8 @@ const upload = require('../Middleware/multer'); // Import Multer middleware
 router.get('/',fetchUser, userController.getUserDetails);
 router.get('/users',fetchUser, userController.getAllUsers);
 
-
 // Route to update user details
-router.put('/',fetchUser, userController.updateUserDetails);
+router.put('/',fetchUser,userController.updateUserDetails);
 
 // admin
 router.put('/:id',fetchUser, userController.updateUserByAdmin);

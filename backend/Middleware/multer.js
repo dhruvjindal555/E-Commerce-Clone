@@ -12,6 +12,8 @@ const storage = new CloudinaryStorage({
       folder = "user_profiles";
     } else if (file.fieldname === "files") {
       folder = "reviews";
+    } else if (file.fieldname === 'productImages') {
+      folder = 'productImages'
     }
 
     return {

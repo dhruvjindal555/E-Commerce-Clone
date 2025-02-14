@@ -27,13 +27,14 @@ import LoadingState from "./context/LoadingContext/LoadingState";
 import Error404 from "./Components/Error404";
 import WishlistContext from "./context/WishlistContext.js/WishlistContext";
 import WishlistState from "./context/WishlistContext.js/WishlistState";
-import Dashboard from "./Components/Admin/Dashboard ";
+import Dashboard from "./Components/Admin/Dashboard/Dashboard ";
 import AdminDashboard from "./Components/Admin/AdminDashboard";
 import WishlistManagement from "./Components/Admin/WishlistManagement"
-import ProductManagement from "./Components/Admin/ProductManagement"
+import ProductManagement from "./Components/Admin/ProductManagement/ProductManagement"
 import UserManagement from "./Components/Admin/UserManagement"
 import ReviewManagement from "./Components/Admin/ReviewManagement"
 import OrderManagement from "./Components/Admin/OrderManagement"
+import ProductState from "./context/ProductContext/ProductState";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -74,21 +75,23 @@ function App() {
       <WishlistState>
         <CartState>
           <AuthState>
-            <OrderState>
-              <ToastContainer
-                position="top-right"
-                autoClose={2000}
-                hideProgressBar={false}
-                newestOnTop={false}
-                closeOnClick
-                rtl={false}
-                pauseOnFocusLoss={false}
-                draggable
-                pauseOnHover={false}
-                theme="dark"
-              />
-              <RouterProvider router={router} />
-            </OrderState>
+            <ProductState>
+              <OrderState>
+                <ToastContainer
+                  position="top-right"
+                  autoClose={2000}
+                  hideProgressBar={false}
+                  newestOnTop={false}
+                  closeOnClick
+                  rtl={false}
+                  pauseOnFocusLoss={false}
+                  draggable
+                  pauseOnHover={false}
+                  theme="dark"
+                />
+                <RouterProvider router={router} />
+              </OrderState>
+            </ProductState>
           </AuthState>
         </CartState>
       </WishlistState>

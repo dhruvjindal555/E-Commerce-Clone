@@ -1,5 +1,6 @@
 const Wishlist = require("../Models/WishlistSchema");
 const Product = require("../Models/ProductSchema");
+const User = require("../Models/UserSchema");
 
 // Add product to wishlist
 const addToWishlist = async (req, res) => {
@@ -59,7 +60,12 @@ const removeFromWishlist = async (req, res) => {
 const getWishlist = async (req, res) => {
     try {
         const userId = req.user.id;
-
+        const user = await User.findById(userId)
+        if(user.role === 'admin'){
+            const wishlist = await Wishlist.find().populate("items").populate('user');
+            return res.status(200).json({ wishlist: wishlist });
+        }
+        
         const wishlist = await Wishlist.findOne({ user: userId }).populate("items");
         if (!wishlist) {
             return res.status(404).json({ message: "Wishlist not found" });

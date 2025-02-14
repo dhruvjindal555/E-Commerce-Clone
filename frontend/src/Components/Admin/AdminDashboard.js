@@ -35,7 +35,7 @@ function AdminDashboard() {
             {/* Close button for mobile */}
             <button
               onClick={toggleSidebar}
-              className="md:hidden text-gray-400 hover:text-white"
+              className="xl:hidden text-gray-400 hover:text-white"
               aria-label="Close sidebar"
             >
               <svg
@@ -86,7 +86,7 @@ function AdminDashboard() {
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Mobile Header */}
-        <header className="md:hidden flex items-center bg-gray-800 text-white p-4">
+        <header className="xl:hidden flex items-center bg-gray-800 text-white p-4">
           <button
             onClick={toggleSidebar}
             className="mr-4 focus:outline-none"
