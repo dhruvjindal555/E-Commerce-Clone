@@ -25,9 +25,9 @@ import AuthState from "./context/AuthContext/AuthState";
 import OrderState from "./context/OrderContext/OrderState";
 import LoadingState from "./context/LoadingContext/LoadingState";
 import Error404 from "./Components/Error404";
-import WishlistContext from "./context/WishlistContext.js/WishlistContext";
-import WishlistState from "./context/WishlistContext.js/WishlistState";
-import Dashboard from "./Components/Admin/Dashboard/Dashboard ";
+import WishlistContext from "./context/WishlistContext/WishlistContext";
+import WishlistState from "./context/WishlistContext/WishlistState";
+import Dashboard from "./Components/Admin/Dashboard/Dashboard";
 import AdminDashboard from "./Components/Admin/AdminDashboard";
 import WishlistManagement from "./Components/Admin/WishlistManagement"
 import ProductManagement from "./Components/Admin/ProductManagement/ProductManagement"

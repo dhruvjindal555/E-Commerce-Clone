@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import WishlistContext from "../../context/WishlistContext.js/WishlistContext";
+import WishlistContext from "../../context/WishlistContext/WishlistContext";
 import { toast } from "react-toastify";
 import LoadingPage from "../LoadingPage";
 import LoadingContext from "../../context/LoadingContext/LoadingContext";

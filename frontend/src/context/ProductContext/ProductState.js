@@ -137,7 +137,7 @@ function ProductState({ children }) {
 
     useEffect(() => {
         getAllProducts();
-    }, [])
+    }, [setLoading])
     return (
         <ProductContext.Provider
             value={{

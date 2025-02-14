@@ -1,9 +1,10 @@
 // src/components/Dashboard/ProductsSummary.js
-import React from 'react';
+import React, { useContext } from 'react';
+import ProductContext from '../../../context/ProductContext/ProductContext';
 
 const ProductsSummary = () => {
-  // Dummy data
-  const totalProducts = 75;
+  const { products } = useContext(ProductContext);
+  const totalProducts = products.length;
 
   return (
     <div className="bg-white shadow rounded p-4">

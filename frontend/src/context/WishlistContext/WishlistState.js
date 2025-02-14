@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import WishlistContext from './WishlistContext'
 import LoadingContext from '../LoadingContext/LoadingContext';
 
@@ -33,7 +33,8 @@ function WishlistState({ children }) {
             console.error("Server error.", error);
         }
     };
-    const getAllWishlist = async () => {
+    // Memoize getAllWishlist to avoid re-creation on every render
+    const getAllWishlist = useCallback(async () => {
         setLoading(true);
         try {
             const token = localStorage.getItem('authToken');
@@ -48,16 +49,17 @@ function WishlistState({ children }) {
             setLoading(false);
             if (response.ok) {
                 console.log(data);
-                return data.wishlist
+                return data.wishlist;
             } else {
-                throw new Error(data.message || "Failed to all fetch wishlists")
+                throw new Error(data.message || "Failed to fetch wishlists");
             }
         } catch (error) {
             setLoading(false);
             console.error("Server error.", error);
-            throw new Error(error.message)
+            throw new Error(error.message);
         }
-    };
+    }, [setLoading]);
+
 
     // Function to add a product to the wishlist.
     const addToWishlist = async (productId) => {
@@ -103,7 +105,7 @@ function WishlistState({ children }) {
             } else {
                 throw new Error(data.message || "Failed to remove product from wishlist")
             }
-        } catch (error) {   
+        } catch (error) {
             console.error("Server error.", error);
             throw new Error(error)
         }

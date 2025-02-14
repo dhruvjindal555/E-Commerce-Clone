@@ -11,7 +11,7 @@ import LoadingPage from '../LoadingPage';
 import { toast } from 'react-toastify';
 import AuthContext from '../../context/AuthContext/AuthContext';
 import LoadingContext from '../../context/LoadingContext/LoadingContext';
-import WishlistContext from '../../context/WishlistContext.js/WishlistContext';
+import WishlistContext from '../../context/WishlistContext/WishlistContext';
 
 function ProductPage() {
     const { wishlist, addToWishlist, removeFromWishlist } = useContext(WishlistContext);

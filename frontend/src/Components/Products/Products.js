@@ -4,7 +4,7 @@ import ProductsItem from './ProductsItem';
 import { useLoaderData } from 'react-router';
 import LoadingContext from '../../context/LoadingContext/LoadingContext';
 import LoadingPage from '../LoadingPage';
-import WishlistContext from '../../context/WishlistContext.js/WishlistContext';
+import WishlistContext from '../../context/WishlistContext/WishlistContext';
 
 const Products = () => {
   const products = useLoaderData()

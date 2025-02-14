@@ -3,7 +3,7 @@ import CartContext from '../../context/CartContext/CartContext';
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
 import { Carousel } from 'react-responsive-carousel';
 import { useNavigate } from 'react-router-dom';
-import WishlistContext from '../../context/WishlistContext.js/WishlistContext';
+import WishlistContext from '../../context/WishlistContext/WishlistContext';
 import { toast } from 'react-toastify';
 
 const CartItem = ({ product, index }) => {
