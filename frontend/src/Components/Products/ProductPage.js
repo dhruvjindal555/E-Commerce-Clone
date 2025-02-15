@@ -374,7 +374,7 @@ export default ProductPage
 export const productPageLoader = async ({ params }) => {
     const { id } = params;
     try {
-        const response = await fetch(`http://localhost:8888/product/getProduct/${id}`);
+        const response = await fetch(`https://apni-dukaan-3555.onrender.com/product/getProduct/${id}`);
         if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json()
         console.log('Response from backend:', data);
