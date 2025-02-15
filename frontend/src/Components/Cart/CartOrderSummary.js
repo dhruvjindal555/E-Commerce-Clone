@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import OrderContext from "../../context/OrderContext/OrderContext";
 import { useNavigate } from "react-router";
 
-const CartOrderSummary = ({ cart }) => {
+const CartOrderSummary = ({ cart,setPaymentModal,setDeliveryMethod,deliveryMethod }) => {
   // Context
   const { deliveryCosts, setCart, setCartNumber } = useContext(CartContext);
   const { fetchUserDetails } = useContext(AuthContext);
@@ -16,7 +16,7 @@ const CartOrderSummary = ({ cart }) => {
   const navigate = useNavigate()
   const [couponCode, setCouponCode] = useState("");
   const [pinCode, setPinCode] = useState("");
-  const [deliveryMethod, setDeliveryMethod] = useState("Standard");
+  
   const [paymentMethod, setPaymentMethod] = useState("cod");
 
   // Calculations
@@ -31,6 +31,7 @@ const CartOrderSummary = ({ cart }) => {
     };
     loadPincode();
   }, []);
+
   const handleCheckout = async () => {
     if (paymentMethod === 'cod') {
       const newOrder = {
@@ -52,7 +53,8 @@ const CartOrderSummary = ({ cart }) => {
         toast.error('Order placement failed');
       }
     } else {
-      toast.info('Online payment is not yet implemented');
+      setPaymentModal(true)
+      // toast.info('Online payment is not yet implemented');
     }
 
   };

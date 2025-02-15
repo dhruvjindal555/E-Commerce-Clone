@@ -8,7 +8,7 @@ import { FaUserCircle } from "react-icons/fa";
 function Navbar() {
   const { cartNumber } = useContext(CartContext);
   const [products, setProducts] = useState([])
-  const { userDetails, fetchUserDetails } = useContext(AuthContext);
+  const { userDetails, setUserDetails, fetchUserDetails } = useContext(AuthContext);
   const navigate = useNavigate();
   const menuButtonRef = useRef(null);
   const [searchQuery, setSearchQuery] = useState("");
@@ -48,6 +48,8 @@ function Navbar() {
 
   const onLogOutIn = () => {
     if (window.localStorage.getItem('authToken')) {
+      setUserDetails({})
+      console.log('Logging out', userDetails);
       window.localStorage.removeItem('authToken');
       window.localStorage.removeItem('cart');
 

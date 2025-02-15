@@ -12,11 +12,18 @@ const createOrder = async (req, res) => {
             orderId: `ORD-${Date.now()}`,  // Example of generating a unique order ID
             ...req.body  // Spread operator to include other fields from request body
         })
-        await newOrder.save();
         const order = await newOrder.populate('itemsOrdered.productId');
+        await newOrder.save();
         console.log(order);
-        if (user.email) await sendOrderConfirmationEmail(user.email, order);
-        else throw new Error("User email not found");
+        if (user.email) {
+            try{
+                await sendOrderConfirmationEmail(user.email, order);
+            }catch(error){
+                await newOrder.deleteOne()
+                console.log('Deleted order because of error while sending email');                
+                throw new Error (error)
+            }
+        } else throw new Error("User email not found");
         res.status(201).json({ success: true, newOrder });
     } catch (error) {
         res.status(400).json({ success: false, message: error.message });

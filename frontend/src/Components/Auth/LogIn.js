@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import {
   Link,
   useNavigate
@@ -9,7 +9,7 @@ import LoadingContext from '../../context/LoadingContext/LoadingContext';
 import LoadingPage from '../LoadingPage';
 
 function LogIn() {
-  const { userDetails, credentials, setCredentials, handleLogIn } = useContext(AuthContext)
+  const { userDetails, credentials, setCredentials, handleLogIn, fetchUserDetails } = useContext(AuthContext)
   const { loading, setLoading } = useContext(LoadingContext)
   const navigate = useNavigate()
 
@@ -22,18 +22,26 @@ function LogIn() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { success, message } = await handleLogIn()
-    if (success == true) {
+    const { success, message } = await handleLogIn();
+    if (!success) {
+      toast.error(message);
+    } else {
+      toast.success('Logged In Successfully!');
+      // Optionally, you can trigger fetching of user details
+      await fetchUserDetails();
+    }
+  };
+  useEffect(() => {
+    if (userDetails && Object.keys(userDetails).length > 0) {
+      // Now that userDetails is updated, navigate accordingly
       console.log(userDetails);      
       if (userDetails?.role === 'admin') {
-        return navigate('/admin')
+        navigate('/admin');
+      } else {
+        navigate('/');
       }
-      toast.success('Logged In Successfully!');
-      navigate('/')
-    } else {
-      toast.error(message);
     }
-  }
+  }, [userDetails]);
   if (loading) return <LoadingPage />
   return (
     <>

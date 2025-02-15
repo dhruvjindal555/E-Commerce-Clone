@@ -12,6 +12,7 @@ import { toast } from 'react-toastify';
 import AuthContext from '../../context/AuthContext/AuthContext';
 import LoadingContext from '../../context/LoadingContext/LoadingContext';
 import WishlistContext from '../../context/WishlistContext/WishlistContext';
+import PaymentForm from '../PaymentForm';
 
 function ProductPage() {
     const { wishlist, addToWishlist, removeFromWishlist } = useContext(WishlistContext);
@@ -26,6 +27,7 @@ function ProductPage() {
     const [showAddReview, setShowAddReview] = useState(false);
     const [reviewsRefresh, setReviewsRefresh] = useState(0);
     const [isCheckoutModalOpen, setIsCheckoutModalOpen] = useState(false);
+    const [isPayementModalOpen, setIsPaymentModalOpen] = useState(false);
     const [couponCode, setCouponCode] = useState('');
     const [quantity, setQuantity] = useState(1);
     const { handleCreateOrder } = useContext(OrderContext);
@@ -86,7 +88,9 @@ function ProductPage() {
             setIsCheckoutModalOpen(false);
             toast.success('Order placed sucessfully!');
         } else {
-            toast.info('Online payment is not yet implemented');
+            setIsCheckoutModalOpen(false);
+            setIsPaymentModalOpen(true);
+            // toast.info('Online payment is not yet implemented');
         }
 
     };
@@ -118,23 +122,24 @@ function ProductPage() {
             return String(val._id) === String(data._id)
         });
         setLiked(isLiked);
-    }, [wishlist, data._id]); // Run this effect when wishlist or product._id changes
+    }, [wishlist, data._id, userDetails, paymentMethod]); // Run this effect when wishlist or product._id changes
 
     useEffect(() => {
         window.scrollTo(0, 0)
     }, [])
     // Effect to lock/unlock scroll when modal is open
     useEffect(() => {
-        if (isCheckoutModalOpen) {
+        if (isCheckoutModalOpen || isPayementModalOpen) {
             document.body.style.overflow = 'hidden'; // Prevent scrolling
         } else {
             document.body.style.overflow = 'unset'; // Restore scrolling
         }
 
+
         return () => {
             document.body.style.overflow = 'unset'; // Clean up on unmount
         };
-    }, [isCheckoutModalOpen]);
+    }, [isCheckoutModalOpen,isPayementModalOpen]);
 
     if (loading) return <LoadingPage />
     return (
@@ -341,6 +346,25 @@ function ProductPage() {
                 couponCode={couponCode}
                 setCouponCode={setCouponCode}
                 onCheckout={handleCheckout}
+            />
+            <PaymentForm
+                product={data}
+                quantity={quantity}
+                newOrder={{
+                    itemsOrdered: [
+                        {
+                            productId: data._id,
+                            quantity: quantity,
+                            price: Math.round(data.price * quantity + deliveryCosts[deliveryMethod])
+                        }
+                    ],
+                    orderStatus: "Pending",
+                    shippingMethod: deliveryMethod,
+                }}
+                isOpen={isPayementModalOpen}
+                setIsPaymentModalOpen={setIsPaymentModalOpen}
+                deliveryCosts={deliveryCosts}
+                deliveryMethod={deliveryMethod}
             />
         </div>
     )

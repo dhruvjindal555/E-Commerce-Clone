@@ -35,6 +35,10 @@ import UserManagement from "./Components/Admin/UserManagement"
 import ReviewManagement from "./Components/Admin/ReviewManagement"
 import OrderManagement from "./Components/Admin/OrderManagement"
 import ProductState from "./context/ProductContext/ProductState";
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+
+const stripePromise = loadStripe('pk_test_51OWKAVSDJ0AxOUCaBITPNU4CmAR0Uey5xYo8uPMoVGjwox5LGoWkds5eg3WIFhLrcIZpNGQCzn6NWrhbP2AClk3k00CLeANSVp'); // publishable key
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -72,30 +76,32 @@ const router = createBrowserRouter(
 function App() {
   return (
     <LoadingState>
-      <WishlistState>
-        <CartState>
-          <AuthState>
+      <AuthState>
+        <WishlistState>
+          <CartState>
             <ProductState>
               <OrderState>
-                <ToastContainer
-                  position="top-right"
-                  autoClose={2000}
-                  hideProgressBar={false}
-                  newestOnTop={false}
-                  closeOnClick
-                  rtl={false}
-                  pauseOnFocusLoss={false}
-                  draggable
-                  pauseOnHover={false}
-                  theme="dark"
-                />
-                <RouterProvider router={router} />
+                <Elements stripe={stripePromise}>
+                  <ToastContainer
+                    position="top-right"
+                    autoClose={2000}
+                    hideProgressBar={false}
+                    newestOnTop={false}
+                    closeOnClick
+                    rtl={false}
+                    pauseOnFocusLoss={false}
+                    draggable
+                    pauseOnHover={false}
+                    theme="dark"
+                  />
+                  <RouterProvider router={router} />
+                </Elements>
               </OrderState>
             </ProductState>
-          </AuthState>
-        </CartState>
-      </WishlistState>
-    </LoadingState>
+          </CartState>
+        </WishlistState>
+      </AuthState>
+    </LoadingState >
   );
 }
 export default App;

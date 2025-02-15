@@ -1,9 +1,11 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import WishlistContext from './WishlistContext'
 import LoadingContext from '../LoadingContext/LoadingContext';
+import AuthContext from '../AuthContext/AuthContext';
 
 
 function WishlistState({ children }) {
+    const {userDetails} =  useContext(AuthContext)
     const [wishlist, setWishlist] = useState([]);
     const { setLoading } = useContext(LoadingContext);
 
@@ -124,7 +126,7 @@ function WishlistState({ children }) {
             }
         }
         fetchWishlist()
-    }, []);
+    }, [userDetails]);
     return (
         <WishlistContext.Provider
             value={{

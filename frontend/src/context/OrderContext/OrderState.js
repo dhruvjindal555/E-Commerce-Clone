@@ -3,9 +3,11 @@ import React, { useContext, useEffect, useState } from 'react';
 import { fetchOrders, createOrder, updateOrder, deleteOrder } from './api'; // Adjust the import path as necessary
 import OrdersContext from '../OrderContext/OrderContext'
 import LoadingContext from '../LoadingContext/LoadingContext';
+import AuthContext from '../AuthContext/AuthContext';
 
 function OrdersState({ children }) {
     const [orders, setOrders] = useState([]);
+    const {userDetails} = useContext(AuthContext)
     const {loading, setLoading} = useContext(LoadingContext);
     const [error, setError] = useState(null);
     // const [newOrderData, setNewOrderData] = useState({})
@@ -26,7 +28,7 @@ function OrdersState({ children }) {
     };
     useEffect(() => {
         loadOrders();
-    }, []);
+    }, [userDetails]);
 
     // Function to handle creating a new order
     const handleCreateOrder = async (newOrderData) => {

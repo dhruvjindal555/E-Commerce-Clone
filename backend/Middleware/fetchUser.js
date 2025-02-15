@@ -1,6 +1,8 @@
 var jwt = require('jsonwebtoken');
 require('dotenv').config()
 const SECRET_KEY = process.env.SECRET_KEY
+
+
 function fetchUser(req, res, next) {
     const token = req.header('authToken');
     if(!token) return res.status(401).json({success: false,message: 'Token not found'})

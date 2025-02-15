@@ -34,7 +34,7 @@ function SignUp() {
         e.preventDefault();
         const { success, message } = await handleSignUp();
         if (success == true) {
-            toast.success('Loggin with your credentials!');
+            toast.success('Login with your credentials!');
             navigate('/auth/login')
         } else {
             toast.error(message);

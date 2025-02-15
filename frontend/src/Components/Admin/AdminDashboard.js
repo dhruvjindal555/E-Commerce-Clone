@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import AuthContext from "../../context/AuthContext/AuthContext";
 
 function AdminDashboard() {
+  const {setUserDetails}  = useContext(AuthContext)
   const navigate = useNavigate()
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -15,7 +17,7 @@ function AdminDashboard() {
     if (window.localStorage.getItem('authToken')) {
       window.localStorage.removeItem('authToken');
       window.localStorage.removeItem('cart');
-
+      setUserDetails({})
       toast.success('Logged Out Successfully');
     }
     navigate('/auth/login');

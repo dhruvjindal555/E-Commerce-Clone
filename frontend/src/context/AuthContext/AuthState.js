@@ -22,7 +22,9 @@ function AuthState(props) {
     setLoading(false)
     const { success, message, authToken } = data
     if (success) {
-      localStorage.setItem("authToken", authToken)
+      window.localStorage.setItem("authToken", authToken)
+      const data = await fetchUserDetails()
+      console.log("data",data);      
       setCredentials({
         email: "",
         password: ""
@@ -77,7 +79,7 @@ function AuthState(props) {
 
       const data = await response.json();
       setLoading(false)
-      setUserDetails(() => data.user);
+      setUserDetails(data.user);
       // console.log(data);      
       if (data.success) {
         return data.user;
@@ -208,6 +210,7 @@ function AuthState(props) {
       loading,
       setLoading,
       userDetails,
+      setUserDetails,
       credentials,
       setCredentials,
       handleLogIn,

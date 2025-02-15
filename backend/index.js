@@ -13,6 +13,7 @@ app.use('/order', require('./Routes/order'))
 app.use('/user', require('./Routes/user'))
 app.use('/review', require('./Routes/reviewRoutes'))
 app.use('/wishlist', require('./Routes/wishlistRoutes'))
+app.use('/payment', require('./Routes/paymentRoutes'))
 
 app.listen(port, () => {
   console.log(`Listening at http://localhost:${port}`)

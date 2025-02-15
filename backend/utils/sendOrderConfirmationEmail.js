@@ -31,9 +31,7 @@ const sendOrderConfirmationEmail = async (userEmail, order) => {
         <h3>Order Details:</h3>
         <ul>${orderItems}</ul>
         <p><strong>Total Amount:</strong> ₹${order.itemsOrdered.reduce(
-          (acc, item) => acc + item.price * item.quantity,
-          0
-        )}</p>
+        (acc, item) => acc + item.price * item.quantity, 0)}</p>
         <p>We will notify you when your order is shipped.</p>
         <p>Best regards,<br>Apni Dukaan Team</p>
       `,
@@ -46,6 +44,6 @@ const sendOrderConfirmationEmail = async (userEmail, order) => {
     console.error("Error sending email:", error);
     throw new Error("Error sending email");
   }
-};0
+}; 0
 
 module.exports = sendOrderConfirmationEmail;
