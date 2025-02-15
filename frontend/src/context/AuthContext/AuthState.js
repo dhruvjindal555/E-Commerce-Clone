@@ -11,7 +11,7 @@ function AuthState(props) {
   const [userDetails, setUserDetails] = useState({})
   const handleLogIn = async () => {
     setLoading(true)
-    const response = await fetch("http://localhost:8888/auth/login", {
+    const response = await fetch("https://apni-dukaan-3555.onrender.com/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -37,7 +37,7 @@ function AuthState(props) {
   const handleSignUp = async () => {
     if (credentials.password === credentials.confirmPassword) {
       setLoading(true)
-      const response = await fetch("http://localhost:8888/auth/signup", {
+      const response = await fetch("https://apni-dukaan-3555.onrender.com/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -64,7 +64,7 @@ function AuthState(props) {
   const fetchUserDetails = async () => {
     try {
       setLoading(true)
-      const response = await fetch('http://localhost:8888/user', {
+      const response = await fetch('https://apni-dukaan-3555.onrender.com/user', {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -95,7 +95,7 @@ function AuthState(props) {
   const updateUserDetails = async (userData) => {
     try {
       setLoading(true)
-      const response = await fetch('http://localhost:8888/user', {
+      const response = await fetch('https://apni-dukaan-3555.onrender.com/user', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -136,7 +136,7 @@ function AuthState(props) {
   const updateUserByAdmin = async (userData) => {
     try {
       setLoading(true)
-      const response = await fetch(`http://localhost:8888/user/${userData._id}`, {
+      const response = await fetch(`https://apni-dukaan-3555.onrender.com/user/${userData._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -177,7 +177,7 @@ function AuthState(props) {
   const deleteUserByAdmin = async (id) => {
     try {
       setLoading(true)
-      const response = await fetch(`http://localhost:8888/user/${id}`, {
+      const response = await fetch(`https://apni-dukaan-3555.onrender.com/user/${id}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

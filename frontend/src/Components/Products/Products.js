@@ -65,7 +65,7 @@ export default Products;
 export const productsLoader = async ({ params }) => {
   const { mainCategory, subCategory } = params;
   try {
-    const response = await fetch(`http://localhost:8888/product/getAllProduct`);
+    const response = await fetch(`https://apni-dukaan-3555.onrender.com/product/getAllProduct`);
     if (!response.ok) throw new Error('Network response was not ok');
     const data = await response.json();
     console.log('Response from backend:', data);

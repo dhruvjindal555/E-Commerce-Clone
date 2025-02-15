@@ -12,7 +12,7 @@ const UsersSummary = () => {
     const fetchUsers = async () => {
       try {
         const token = window.localStorage.getItem('authToken');
-        const response = await fetch('http://localhost:8888/user/users', {
+        const response = await fetch('https://apni-dukaan-3555.onrender.com/user/users', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

@@ -10,7 +10,7 @@ function ReviewsList({ productId, currentUserId, refreshTrigger }) {
   // Function to fetch reviews from the backend.
   const fetchReviews = async () => {
     try {
-      const response = await fetch(`http://localhost:8888/review/${productId}`);
+      const response = await fetch(`https://apni-dukaan-3555.onrender.com/review/${productId}`);
       const data = await response.json();
       if (response.ok) {
         setReviews(data);
@@ -33,7 +33,7 @@ function ReviewsList({ productId, currentUserId, refreshTrigger }) {
     try {
       setLoading(true);
       const token = localStorage.getItem('authToken');
-      const response = await fetch(`http://localhost:8888/review/${reviewId}`, {
+      const response = await fetch(`https://apni-dukaan-3555.onrender.com/review/${reviewId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

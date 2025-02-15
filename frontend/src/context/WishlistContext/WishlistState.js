@@ -14,7 +14,7 @@ function WishlistState({ children }) {
         setLoading(true);
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch('http://localhost:8888/wishlist', {
+            const response = await fetch('https://apni-dukaan-3555.onrender.com/wishlist', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,7 +40,7 @@ function WishlistState({ children }) {
         setLoading(true);
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch('http://localhost:8888/wishlist', {
+            const response = await fetch('https://apni-dukaan-3555.onrender.com/wishlist', {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -67,7 +67,7 @@ function WishlistState({ children }) {
     const addToWishlist = async (productId) => {
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch('http://localhost:8888/wishlist/add', {
+            const response = await fetch('https://apni-dukaan-3555.onrender.com/wishlist/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -92,7 +92,7 @@ function WishlistState({ children }) {
     const removeFromWishlist = async (productId) => {
         try {
             const token = localStorage.getItem('authToken');
-            const response = await fetch('http://localhost:8888/wishlist/remove', {
+            const response = await fetch('https://apni-dukaan-3555.onrender.com/wishlist/remove', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

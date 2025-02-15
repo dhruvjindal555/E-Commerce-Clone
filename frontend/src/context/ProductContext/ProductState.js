@@ -8,7 +8,7 @@ function ProductState({ children }) {
     const getAllProducts = async () => {
         try {
             setLoading(true)
-            const response = await fetch('http://localhost:8888/product/getAllProduct', {
+            const response = await fetch('https://apni-dukaan-3555.onrender.com/product/getAllProduct', {
                 mathod: "GET"
             })
             const data = await response.json()
@@ -47,7 +47,7 @@ function ProductState({ children }) {
             }
 
             setLoading(true)
-            const res = await fetch('http://localhost:8888/product', {
+            const res = await fetch('https://apni-dukaan-3555.onrender.com/product', {
                 method: "POST",
                 headers: {
                     'authToken': window.localStorage.getItem('authToken')
@@ -86,7 +86,7 @@ function ProductState({ children }) {
             }
 
             setLoading(true)
-            const res = await fetch(`http://localhost:8888/product/${id}`, {
+            const res = await fetch(`https://apni-dukaan-3555.onrender.com/product/${id}`, {
                 method: "PUT",
                 headers: {
                     'authToken': window.localStorage.getItem('authToken')
@@ -113,7 +113,7 @@ function ProductState({ children }) {
     const deleteProduct = async (id) => {
         try {
             setLoading(true)
-            const res = await fetch(`http://localhost:8888/product/${id}`, {
+            const res = await fetch(`https://apni-dukaan-3555.onrender.com/product/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'authToken': window.localStorage.getItem('authToken')

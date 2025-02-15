@@ -31,7 +31,7 @@ const PaymentCard = ({ isOpen, deliveryMethod, setPaymentModal }) => {
         try {
             // Request the PaymentIntent client secret from your backend
             
-            const response = await fetch('http://localhost:8888/payment/create-payment-intent', {
+            const response = await fetch('https://apni-dukaan-3555.onrender.com/payment/create-payment-intent', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

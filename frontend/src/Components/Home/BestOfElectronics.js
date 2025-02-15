@@ -12,7 +12,7 @@ const BestofElectronics = () => {
 
     useEffect(() => {
         setLoading(true)
-        fetch('http://localhost:8888/product/getAllProduct')
+        fetch('https://apni-dukaan-3555.onrender.com/product/getAllProduct')
         
             .then((response) => response.json())
             .then((responseData) => {

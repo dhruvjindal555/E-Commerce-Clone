@@ -52,7 +52,7 @@ function Review({ show, setShow, productId, onReviewAdded }) {
       // Get your JWT token (or however you manage auth)
       const token = localStorage.getItem('authToken');
       setLoading(true);
-      const response = await fetch('http://localhost:8888/review', {
+      const response = await fetch('https://apni-dukaan-3555.onrender.com/review', {
         method: 'POST',
         headers: {
           // Do not set the Content-Type header when sending FormData!

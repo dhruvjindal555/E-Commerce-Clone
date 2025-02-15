@@ -14,7 +14,7 @@ const ReviewManagement = () => {
   const deleteReview = async (id) => {
     try {
       setLoading(true)
-      const response = await fetch(`http://localhost:8888/review/${id}`, {
+      const response = await fetch(`https://apni-dukaan-3555.onrender.com/review/${id}`, {
         method: 'DELETE',
         headers: {
           'authToken': window.localStorage.getItem('authToken')
@@ -40,7 +40,7 @@ const ReviewManagement = () => {
     try {
       const fetchReviews = async () => {
         setLoading(true)
-        const response = await fetch('http://localhost:8888/review', {
+        const response = await fetch('https://apni-dukaan-3555.onrender.com/review', {
           method: 'GET',
           headers: {
             'authToken': window.localStorage.getItem('authToken')

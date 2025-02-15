@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8888/order'; 
+const API_URL = 'https://apni-dukaan-3555.onrender.com/order'; 
 
 export const fetchOrders = async () => {
     const response = await fetch(API_URL, {

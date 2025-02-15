@@ -81,7 +81,7 @@ const ProfilePage = () => {
 
     try {
       setLoading(true);
-      const response = await fetch("http://localhost:8888/user/upload-profile", {
+      const response = await fetch("https://apni-dukaan-3555.onrender.com/user/upload-profile", {
         method: "POST",
         headers: {
           authToken: window.localStorage.getItem("authToken"),

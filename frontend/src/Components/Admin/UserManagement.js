@@ -78,7 +78,7 @@ const UserManagement = () => {
     const fetchUsers = async () => {
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:8888/user/users", {
+        const response = await fetch("https://apni-dukaan-3555.onrender.com/user/users", {
           method: "GET",
           headers: {
             "Content-Type": "application/json",
