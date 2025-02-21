@@ -11,14 +11,6 @@ You can try the live application here: [E-Commerce Clone](https://apni-dukaan-pe
 
 - [Features](#features)
 - [Tech Stack](#tech-stack)
-- [Installation](#installation)
-  - [Backend Setup](#backend-setup)
-  - [Frontend Setup](#frontend-setup)
-- [Environment Variables](#environment-variables)
-- [Deployment](#deployment)
-- [Contributing](#contributing)
-- [License](#license)
-- [Contact](#contact)
 
 ## Features
 
