@@ -26,6 +26,7 @@ You can try the live application here: [E-Commerce Clone](https://apni-dukaan-pe
   - Track order history and status updates.
 - **Admin Panel:**  
   - Manage products, inventory, orders, and user accounts.
+  - Get insights on wishlist.
 - **Responsive Design:**  
   - Optimized for desktops, tablets, and mobile devices.
 
