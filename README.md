@@ -1,4 +1,4 @@
-# E-Commerce Clone
+# Apni Dukaan
 
 A full-stack e-commerce web application built with modern technologies, designed to provide a seamless shopping experience. This project includes secure user authentication, product browsing, shopping cart functionality, order management, and integrated payment processing.
 
